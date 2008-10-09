@@ -1,36 +1,62 @@
 #!/usr/bin/perl
 
+# all the nice modules
 use warnings;
 use strict;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
-use File::Copy;
 use File::Spec;
-use Getopt::Std;
-use Getopt::Long qw/ :config no_ignore_case /;
+use Getopt::Long qw/ :config no_ignore_case bundling /;
 use Games::Tournament::RoundRobin;
 use Net::CUPS::Destination;
 use File::Temp;
 
-# set up the boolean options and these with non-optional values
+# set up all the nice options
 our %Options;
-getopts('g:b:r:psa',\%Options);
-
-# set up the options with optional values
 GetOptions(
+        's'   => \$Options{s},
+        'a'   => \$Options{a},
+        'p'   => \$Options{p},
+        'b:s' => \$Options{b},
+        'r:s' => \$Options{r},
+        'g:s' => \$Options{g},
         'n:s' => \$Options{n},
         'd:s' => \$Options{d},
         'o:s' => \$Options{o},
         'P:s' => \$Options{P},
 );
 
+# set up some general variables
 my $Cwd = getcwd() or die "Couldn't get the current working directory: $!\n";
+my $Etcpath = File::Spec->catfile(File::Spec->rootdir(), qw/ home moses Perl Myrtscht etc /);
 
 # initialize the logger or not
 if (defined $Options{d}) {
     my $logfile =
         $Options{d} ?
         File::Spec->catfile($Cwd, $Options{d}) :
-        File::Spec->catfile($Cwd, "debug.log");
+        File::Spec->catfile($Etcpath, 'log.conf');
     Log::Log4perl->init($logfile);
+}
+DEBUG("Initialized.");
+
+# little debbugging help
+foreach my $option (keys %Options) {
+    DEBUG("Set option $option to $Options{$option}.") if defined $Options{$option};
+}
+
+# invoke the subroutines corresponding to the options
+if (defined $Options{n}) {
+    DEBUG("Invoking subroutine to create new tournament.");
+    &create_new_tournament($Options{n});
+}
+
+# the subroutine invoked if the option -n is defined
+sub create_new_tournament {
+    my @date = (localtime)[4,3,5];
+    my $directory_name = 
+        shift || sprintf("Tournament-%02d%02d%d", map($_ + 1,  @date[0,1]), $date[2] + 1900);
+    @date = undef;
+    mkdir($directory_name, 0755) or die("Couldn't make directory $directory_name: $!\n");
+    DEBUG("Generated new tournament directory: $directory_name.");
 }
