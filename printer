@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+use Net::CUPS;
+use Net::CUPS::Destination;
+
+my $cups = Net::CUPS->new() or die "bla:$!";
+print %$cups, "\n";
+my $printer = $cups->getDestination("hplaser");
+print "$$printer\n";
+
+open PRINTFILE, ">/tmp/printfile";
+print PRINTFILE "0123456789" x 9;
+
+my $jobid = $printer->printFile("/tmp/printfile", "huhu");
+print $jobid;
