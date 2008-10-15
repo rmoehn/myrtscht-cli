@@ -5,13 +5,14 @@ use strict;
 use Net::CUPS;
 use Net::CUPS::Destination;
 
-my $cups = Net::CUPS->new() or die "bla:$!";
-print %$cups, "\n";
-my $printer = $cups->getDestination("hplaser");
-print "$$printer\n";
+my $cups = Net::CUPS->new();
+my @printers = $cups->getDestinations();
+print "@printers\n";
 
+print($_->getName(), "\n") for (@printers);
+my $printer = $cups->getDestination("HP_Laserjet_6P");
 open PRINTFILE, ">/tmp/printfile";
 print PRINTFILE "0123456789" x 9;
 
-my $jobid = $printer->printFile("/tmp/printfile", "huhu");
+my $jobid = $printer->printFile("/home/moses/Perl/Myrtscht/printer", "huhu");
 print $jobid;
