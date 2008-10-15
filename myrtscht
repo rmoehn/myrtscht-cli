@@ -8,8 +8,8 @@ use Cwd;
 use File::Spec;
 use Getopt::Long qw/ :config no_ignore_case bundling /;
 use Games::Tournament::RoundRobin;
+use Net::CUPS;
 use Net::CUPS::Destination;
-use File::Temp;
 
 # set up all the nice options
 our %Options;
@@ -27,8 +27,11 @@ GetOptions(
 );
 
 # set up some general variables
-my $Cwd = getcwd() or die "Couldn't get the current working directory: $!\n";
-my $Etcpath = File::Spec->catfile(File::Spec->rootdir(), qw/ home moses Perl Myrtscht etc /);
+my $Cwd = getcwd()
+    or die "Couldn't get the current working directory: $!\n";
+my $Etcpath = File::Spec->catfile(
+        File::Spec->rootdir(),
+        qw/ home moses Perl Myrtscht etc /);
 
 # initialize the logger or not
 if (defined $Options{d}) {
@@ -42,7 +45,8 @@ DEBUG("Initialized.");
 
 # little debbugging help
 foreach my $option (keys %Options) {
-    DEBUG("Set option $option to $Options{$option}.") if defined $Options{$option};
+    DEBUG("Set option $option to $Options{$option}.")
+        if defined $Options{$option};
 }
 
 # invoke the subroutines corresponding to the options
@@ -53,10 +57,34 @@ if (defined $Options{n}) {
 
 # the subroutine invoked if the option -n is defined
 sub create_new_tournament {
+    # creating the directory in which the tournament is stored
     my @date = (localtime)[4,3,5];
     my $directory_name = 
-        shift || sprintf("Tournament-%02d%02d%d", map($_ + 1,  @date[0,1]), $date[2] + 1900);
+        shift || sprintf(
+                "Tournament-%02d%02d%d",
+                map($_ + 1,  @date[0,1]),
+                $date[2] + 1900);
     @date = undef;
-    mkdir($directory_name, 0755) or die("Couldn't make directory $directory_name: $!\n");
+    mkdir($directory_name, 0755)
+        or die("Couldn't make directory $directory_name: $!\n");
     DEBUG("Generated new tournament directory: $directory_name.");
+    
+    # read the template for the group files
+    chdir($directory_name)
+        or die("Couldn't change into directory $directory_name: $!\n");
+    DEBUG("Changed into directory $directory_name.");
+    open(GROUPTPL, "<", File::Spec->catfile($Etcpath, "group.tpl"))
+        or die("Couldn't open the group template file: $!\n");
+    my @grouptpl = <GROUPTPL>;
+    close(GROUPTPL);
+
+    # write the group template into all the group files
+    my $groupnr = $Options{g} || 10;
+    for (my $i = 1; $i <= $groupnr; $i++) {
+        my $groupfile = sprintf("%02d.g", $i);
+        open(GROUPFILE, ">", $groupfile)
+            or die("Couldn't open $groupfile: $!\n");
+            print(GROUPFILE @grouptpl);
+    }
+    DEBUG("Wrote template to $groupnr group files.");
 }
