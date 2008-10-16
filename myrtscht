@@ -52,39 +52,60 @@ foreach my $option (keys %Options) {
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
     DEBUG("Invoking subroutine to create new tournament.");
-    &create_new_tournament($Options{n});
+    &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 }
 
 # the subroutine invoked if the option -n is defined
 sub create_new_tournament {
+    my $etcpath = shift;
+    my $options = shift;
+    my $specified_groupfnames = shift;
+
     # creating the directory in which the tournament is stored
+    {
     my @date = (localtime)[4,3,5];
     my $directory_name = 
         shift || sprintf(
                 "Tournament-%02d%02d%d",
                 map($_ + 1,  @date[0,1]),
                 $date[2] + 1900);
-    @date = undef;
     mkdir($directory_name, 0755)
         or die("Couldn't make directory $directory_name: $!\n");
     DEBUG("Generated new tournament directory: $directory_name.");
-    
-    # read the template for the group files
     chdir($directory_name)
         or die("Couldn't change into directory $directory_name: $!\n");
     DEBUG("Changed into directory $directory_name.");
-    open(GROUPTPL, "<", File::Spec->catfile($Etcpath, "group.tpl"))
+    }
+   
+    # write the group template into all the group files
+    if ($options->{g} or !defined $options->{g}) {
+        my $groupnr = $options->{g} || 10;
+        my @groupfiles;
+        for (my $i = 1; $i <= $groupnr; $i++) {
+            push(@groupfiles, sprintf("%02d.g", $i));
+        }
+        &create_groupfiles($etcpath, \@groupfiles);
+    } else {
+        &create_groupfiles($etcpath, $specified_groupfnames);
+    }
+}
+
+# the subroutine for creating the group files
+sub create_groupfiles {
+    my $etcpath = shift;
+    my $groupfnames = shift;
+
+    # read the template for the group files
+    open(GROUPTPL, "<", File::Spec->catfile($$etcpath, "group.tpl"))
         or die("Couldn't open the group template file: $!\n");
     my @grouptpl = <GROUPTPL>;
     close(GROUPTPL);
 
-    # write the group template into all the group files
-    my $groupnr = $Options{g} || 10;
-    for (my $i = 1; $i <= $groupnr; $i++) {
-        my $groupfile = sprintf("%02d.g", $i);
-        open(GROUPFILE, ">", $groupfile)
-            or die("Couldn't open $groupfile: $!\n");
-            print(GROUPFILE @grouptpl);
+    # write the template to all the group files
+    foreach my $groupfname (@$groupfnames) {
+        open(GROUPFILE, ">", $groupfname)
+            or die("Couldn't open $groupfname: $!\n");
+        print(GROUPFILE @grouptpl);
     }
-    DEBUG("Wrote template to $groupnr group files.");
+    DEBUG("Wrote template to group files: @$groupfnames");
 }
