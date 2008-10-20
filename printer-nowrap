@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+open SPOOLER, "| cat -v | lpr -h 2>/dev/null"
+    or die "fork nicht möglich: $!\n";
+
+local $SIG{PIPE} = sub { die "Spooler-Pipe gebrochen.\n" };
+print SPOOLER "Zeug\n";
+close SPOOLER or die "Spool fehlerhaft: $! $?\n";
