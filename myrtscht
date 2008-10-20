@@ -53,6 +53,9 @@ foreach my $option (keys %Options) {
 if (defined $Options{n}) {
     DEBUG("Invoking subroutine to create new tournament.");
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
+} elsif (defined $Options{p}) {
+    DEBUG("Invoking subroutine to process the group files.");
+    &process_group_files(\$Etcpath, \%Options, \@ARGV);
 }
 
 # the subroutine invoked if the option -n is defined
@@ -89,6 +92,32 @@ sub create_new_tournament {
         &create_groupfiles($etcpath, $specified_groupfnames);
     }
 }
+
+# the subroutine invoked if the option -p is defined
+sub &process_group_files {
+    my $etcpath = shift;
+    my $options = shift;
+    my $groupfiles = shift;
+    foreach $groupfile (@$groupfiles) {
+        # read the groupfile
+        open(GROUPFILE, "<", $groupfile)
+            or die("Couldn't open group file $groupfile: $!\n");
+        chomp(my @gf_content = <GROUPFILE>);
+        close(GROUPFILE);
+        my $groupname = substr(shift(@gf_content), 6);
+        DEBUG("The group is named $groupname.");
+        my @tables = split(m([ ,;.:/]), substr(shift(@gf_content), 8));
+        DEBUG("It plays at the tables @gf_content.");
+        shift @gf_content;
+        my @members = @gf_content;
+        DEBUG("It consists of @members");
+        @gf_content = undef;
+
+        # create the schedule for the group
+        my $raw_schedule = Games::Tournament::RoundRobin->new(
+                league => \@members
+                );
+        
 
 # the subroutine for creating the group files
 sub create_groupfiles {
