@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use Net::CUPS;
 use Net::CUPS::Destination;
+$|++;
 
 my $cups = Net::CUPS->new();
 my @printers = $cups->getDestinations();
@@ -11,8 +12,12 @@ print "@printers\n";
 
 print($_->getName(), "\n") for (@printers);
 my $printer = $cups->getDestination("HP_Laserjet_6P");
-open PRINTFILE, ">/tmp/printfile";
-print PRINTFILE "0123456789" x 9;
+$printer->addOption("cpi", 12);
+#print $printer->getOptions() . "\n";
+open PRINTFILE, ">", "printfile";
+print PRINTFILE "1234567890" x 8 . "123456789";
+close PRINTFILE;
+#open PRINTFILE, "<", "printfile";
 
-my $jobid = $printer->printFile("/home/moses/Perl/Myrtscht/printer", "huhu");
+my $jobid = $printer->printFile("printfile", "huhu");
 print $jobid;
