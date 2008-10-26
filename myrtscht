@@ -6,6 +6,7 @@ use strict;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
 use File::Spec;
+use File::Temp;
 use Getopt::Long qw/ :config no_ignore_case bundling /;
 use Games::Tournament::RoundRobin;
 use Net::CUPS;
@@ -27,17 +28,20 @@ GetOptions(
 );
 
 # set up some general variables
-my $Cwd = getcwd()
-    or die "Couldn't get the current working directory: $!\n";
 my $Etcpath = File::Spec->catfile(
         File::Spec->rootdir(),
         qw/ home moses Perl Myrtscht etc /);
+my $Tournam_dir;
+my $Cups;
+my $Printer;
 
 # initialize the logger or not
 if (defined $Options{d}) {
+    my $cwd = getcwd()
+        or die("Couldn't get the current working directory: $!\n");
     my $logfile =
         $Options{d} ?
-        File::Spec->catfile($Cwd, $Options{d}) :
+        File::Spec->catfile($cwd, $Options{d}) :
         File::Spec->catfile($Etcpath, 'log.conf');
     Log::Log4perl->init($logfile);
 }
@@ -49,35 +53,43 @@ foreach my $option (keys %Options) {
         if defined $Options{$option};
 }
 
+# invoke the spooler or not
+if (defined $Options{"p" or "a" or "o"} and !defined $Options{s}) {
+    $Cups = Net::CUPS->new()
+     or warn("Couldn't get a nice CUPS - we won't be able to print.\n");
+    $Printer = $cups->getDestination($Options{P})
+     or warn("Couldn't get your printer's destination: You have to specify another.\n");
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
     DEBUG("Invoking subroutine to create new tournament.");
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{p}) {
     DEBUG("Invoking subroutine to process the group files.");
+    chdir($Tournam_dir)
+        or die("Couldn't change into directory $Tournam_dir: $!\n");
     &process_group_files(\$Etcpath, \%Options, \@ARGV);
 }
 
 # the subroutine invoked if the option -n is defined
 sub create_new_tournament {
-    my $etcpath = shift;
-    my $options = shift;
+    my $etcpath               = shift;
+    my $options               = shift;
     my $specified_groupfnames = shift;
 
     # creating the directory in which the tournament is stored
     {
-    my @date = (localtime)[4,3,5];
-    my $directory_name = 
+    my @date           = (localtime)[4,3,5];
+    $Tournam_dir = 
         shift || sprintf(
                 "Tournament-%02d%02d%d",
                 map($_ + 1,  @date[0,1]),
                 $date[2] + 1900);
-    mkdir($directory_name, 0755)
-        or die("Couldn't make directory $directory_name: $!\n");
-    DEBUG("Generated new tournament directory: $directory_name.");
-    chdir($directory_name)
-        or die("Couldn't change into directory $directory_name: $!\n");
-    DEBUG("Changed into directory $directory_name.");
+    mkdir($Tournam_dir, 0755)
+        or die("Couldn't make directory $Tournam_dir: $!\n");
+    DEBUG("Generated new tournament directory: $Tournam_dir.");
+    chdir($Tournam_dir)
+        or die("Couldn't change into directory $Tournam_dir: $!\n");
+    DEBUG("Changed into directory $Tournam_dir.");
     }
    
     # write the group template into all the group files
@@ -95,10 +107,12 @@ sub create_new_tournament {
 
 # the subroutine invoked if the option -p is defined
 sub &process_group_files {
-    my $etcpath = shift;
-    my $options = shift;
+    my $etcpath    = shift;
+    my $options    = shift;
     my $groupfiles = shift;
-    foreach $groupfile (@$groupfiles) {
+
+    # process the group files one by one
+    foreach my $groupfile (@$groupfiles) {
         # read the groupfile
         open(GROUPFILE, "<", $groupfile)
             or die("Couldn't open group file $groupfile: $!\n");
@@ -106,7 +120,7 @@ sub &process_group_files {
         close(GROUPFILE);
         my $groupname = substr(shift(@gf_content), 6);
         DEBUG("The group is named $groupname.");
-        my @tables = split(m([ ,;.:/]), substr(shift(@gf_content), 8));
+        my @tables  = split(m([ ,;.:/]), substr(shift(@gf_content), 8));
         DEBUG("It plays at the tables @gf_content.");
         shift @gf_content;
         my @members = @gf_content;
@@ -114,14 +128,38 @@ sub &process_group_files {
         @gf_content = undef;
 
         # create the schedule for the group
-        my $raw_schedule = Games::Tournament::RoundRobin->new(
+        my @schedule;
+        {
+        DEBUG("The schedule:");
+        my %round;
+        my $group = Games::Tournament::RoundRobin->new(
                 league => \@members
                 );
-        
+        my %raw_schedule = %{ $group->membersInRound($i) };
+        for (my $i = 0; $i <= $group->rounds(); $i++) {
+            DEBUG("Round $i:");
+                foreach $member (keys %raw_schedule) {
+                my %double;
+                next if $member || $raw_schedule{$member} eq "Bye";
+                next if $double{$member};
+                $round{$member} = $raw_schedule{$_};
+                $double{$raw_schedule{$member}}++; # no return matches
+            }
+            push(@schedule, \%round);
+            DEBUG("Players: %round");
+        }
+        }
+
+        # create the game files
+        my @gamefiles;
+        my $gamefnr++;
+        foreach $round (@schedule) {
+            foreach $member (keys %{ $round }) {
+                
 
 # the subroutine for creating the group files
 sub create_groupfiles {
-    my $etcpath = shift;
+    my $etcpath     = shift;
     my $groupfnames = shift;
 
     # read the template for the group files
@@ -137,4 +175,51 @@ sub create_groupfiles {
         print(GROUPFILE @grouptpl);
     }
     DEBUG("Wrote template to group files: @$groupfnames");
+}
+
+# the subroutine which declares the formats
+# I do it in this way since I don't know another way to manage the
+# fact with the lexical variables.
+sub &formats {
+    my $options  = shift;
+    my $grpname1 = shift;
+    my $grpname2 = shift;
+    my $table1   = shift;
+    my $table2   = shift;
+    my $id1      = shift;
+    my $id2      = shift;
+    my $player1  = shift;
+    my $player2  = shift;
+    my $player3  = shift;
+    my $player4  = shift;
+
+    if (defined $options->{r}) {
+        format GAMEPRINT =
+        Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<< Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<<
+        $$grpname1,               $$table1, $$id1,   $$grpname1,               $$table1, $$id1
+        ----------------------+--------------------- ----------------------+---------------------
+        @|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+        $$player1,             $$player2,            $$player3,            $$player4
+        ----------------------+--------------------- ----------------------+---------------------
+                              |                                            |
+                              |                                            |
+                              |                                            |
+                              |                                            |
+                              |                                            |
+        ----------------------+--------------------- ----------------------+---------------------
+        .
+    } else {
+        format GAMEPRINT =
+        Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<< Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<<
+        $$grpname1,               $$table1, $$id1,   $$grpname1,               $$table1, $$id1
+        ----------------------+--------------------- ----------------------+---------------------
+        @|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+        $$player1,             $$player2,            $$player3,             $$player4
+        ----------------------+--------------------- ----------------------+---------------------
+                              |                                            |
+                              |                                            |
+                              |                                            |
+        ----------------------+--------------------- ----------------------+---------------------
+        .
+    }
 }
