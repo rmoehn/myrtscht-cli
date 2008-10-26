@@ -6,13 +6,18 @@ use Net::CUPS;
 use Net::CUPS::Destination;
 $|++;
 
+my $printer;
+{
 my $cups = Net::CUPS->new();
-my @printers = $cups->getDestinations();
-print "@printers\n";
+#my @printers = $cups->getDestinations();
+#äprint "@printers\n";
 
-print($_->getName(), "\n") for (@printers);
-my $printer = $cups->getDestination() and print "True\n";
+#print($_->getName(), "\n") for (@printers);
+$printer = $cups->getDestination() and print "True\n";
 $printer->addOption("cpi", 12);
+}
+
+print $printer->getName();
 #print $printer->getOptions() . "\n";
 open PRINTFILE, ">", "printfile";
 print PRINTFILE "1234567890" x 8 . "123456789";
