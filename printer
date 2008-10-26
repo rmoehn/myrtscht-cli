@@ -11,7 +11,7 @@ my @printers = $cups->getDestinations();
 print "@printers\n";
 
 print($_->getName(), "\n") for (@printers);
-my $printer = $cups->getDestination("HP_Laserjet_6P");
+my $printer = $cups->getDestination() and print "True\n";
 $printer->addOption("cpi", 12);
 #print $printer->getOptions() . "\n";
 open PRINTFILE, ">", "printfile";
@@ -19,5 +19,5 @@ print PRINTFILE "1234567890" x 8 . "123456789";
 close PRINTFILE;
 #open PRINTFILE, "<", "printfile";
 
-my $jobid = $printer->printFile("printfile", "huhu");
-print $jobid;
+#my $jobid = $printer->printFile("printfile", "huhu");
+#print $jobid;
