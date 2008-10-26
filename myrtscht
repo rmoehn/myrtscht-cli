@@ -59,6 +59,8 @@ if (defined $Options{"p" or "a" or "o"} and !defined $Options{s}) {
      or warn("Couldn't get a nice CUPS - we won't be able to print.\n");
     $Printer = $cups->getDestination($Options{P})
      or warn("Couldn't get your printer's destination: You have to specify another.\n");
+    
+
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
     DEBUG("Invoking subroutine to create new tournament.");
