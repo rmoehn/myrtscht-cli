@@ -31,8 +31,6 @@ GetOptions(
 my $Etcpath = File::Spec->catfile(
         File::Spec->rootdir(),
         qw/ home moses Perl Myrtscht etc /);
-my $Tournam_dir;
-my $Cups;
 my $Printer;
 
 # initialize the logger or not
@@ -55,11 +53,11 @@ foreach my $option (keys %Options) {
 
 # invoke the spooler or not
 if (defined $Options{"p" or "a" or "o"} and !defined $Options{s}) {
-    $Cups = Net::CUPS->new()
+    my $cups = Net::CUPS->new()
      or warn("Couldn't get a nice CUPS - we won't be able to print.\n");
     $Printer = $cups->getDestination($Options{P})
      or warn("Couldn't get your printer's destination: You have to specify another.\n");
-    
+} 
 
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
@@ -67,9 +65,7 @@ if (defined $Options{n}) {
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{p}) {
     DEBUG("Invoking subroutine to process the group files.");
-    chdir($Tournam_dir)
-        or die("Couldn't change into directory $Tournam_dir: $!\n");
-    &process_group_files(\$Etcpath, \%Options, \@ARGV);
+    &process_group_files(\$Etcpath, \%Options, $Printer, \@ARGV);
 }
 
 # the subroutine invoked if the option -n is defined
@@ -81,17 +77,17 @@ sub create_new_tournament {
     # creating the directory in which the tournament is stored
     {
     my @date           = (localtime)[4,3,5];
-    $Tournam_dir = 
+    my $tournam_dir = 
         shift || sprintf(
                 "Tournament-%02d%02d%d",
                 map($_ + 1,  @date[0,1]),
                 $date[2] + 1900);
-    mkdir($Tournam_dir, 0755)
-        or die("Couldn't make directory $Tournam_dir: $!\n");
-    DEBUG("Generated new tournament directory: $Tournam_dir.");
-    chdir($Tournam_dir)
-        or die("Couldn't change into directory $Tournam_dir: $!\n");
-    DEBUG("Changed into directory $Tournam_dir.");
+    mkdir($tournam_dir, 0755)
+        or die("Couldn't make directory $tournam_dir: $!\n");
+    DEBUG("Generated new tournament directory: $tournam_dir.");
+    chdir($tournam_dir)
+        or die("Couldn't change into directory $tournam_dir: $!\n");
+    DEBUG("Changed into directory $tournam_dir.");
     }
    
     # write the group template into all the group files
@@ -108,9 +104,10 @@ sub create_new_tournament {
 }
 
 # the subroutine invoked if the option -p is defined
-sub &process_group_files {
+sub process_group_files {
     my $etcpath    = shift;
     my $options    = shift;
+    my $printer    = shift;
     my $groupfiles = shift;
 
     # process the group files one by one
@@ -120,44 +117,127 @@ sub &process_group_files {
             or die("Couldn't open group file $groupfile: $!\n");
         chomp(my @gf_content = <GROUPFILE>);
         close(GROUPFILE);
+        DEBUG("Group file content: @gf_content");
         my $groupname = substr(shift(@gf_content), 6);
         DEBUG("The group is named $groupname.");
         my @tables  = split(m([ ,;.:/]), substr(shift(@gf_content), 8));
-        DEBUG("It plays at the tables @gf_content.");
+        DEBUG("It plays at the tables @tables.");
         shift @gf_content;
         my @members = @gf_content;
-        DEBUG("It consists of @members");
+        DEBUG("It consists of @members.");
         @gf_content = undef;
 
         # create the schedule for the group
         my @schedule;
         {
         DEBUG("The schedule:");
-        my %round;
         my $group = Games::Tournament::RoundRobin->new(
                 league => \@members
                 );
-        my %raw_schedule = %{ $group->membersInRound($i) };
-        for (my $i = 0; $i <= $group->rounds(); $i++) {
-            DEBUG("Round $i:");
-                foreach $member (keys %raw_schedule) {
-                my %double;
-                next if $member || $raw_schedule{$member} eq "Bye";
-                next if $double{$member};
-                $round{$member} = $raw_schedule{$_};
-                $double{$raw_schedule{$member}}++; # no return matches
+        for (my $i = 1; $i <= $group->rounds(); $i++) {
+            my %round;
+            my %raw_schedule = %{ $group->membersInRound($i) };
+            DEBUG("Round $i");
+            my %parsed_values;
+            foreach my $member (keys %raw_schedule) {
+                next if $member eq "Bye";
+                next if $raw_schedule{$member} eq "Bye";
+                next if $parsed_values{$member};
+                $round{$member} = $raw_schedule{$member};
+                $parsed_values{$round{$member}} = 1;
             }
             push(@schedule, \%round);
-            DEBUG("Players: %round");
+            DEBUG("@schedule");
         }
         }
 
-        # create the game files
+        # create the game files and the files to print
         my @gamefiles;
-        my $gamefnr++;
-        foreach $round (@schedule) {
-            foreach $member (keys %{ $round }) {
+        my @printfiles;
+        my @to_print;
+        my $gamecount = 0;
+        my $printflushcnt = 0;
+        my $printoutcnt = 0;
+        my $printfilecnt = 0;
+        my $roundcnt = 1;
+       
+        # initialisation of printing things 
+        $printer->addOption("cpi", 12) unless defined $options->{s};
+        my $printfile = sprintf("%02d.p", ++$printfilecnt);
+        open(GAMEPRINT, ">>", $printfile) 
+            or die("Couldn't open print file $printfile: $!\n");
+
+        foreach my $round (@schedule) {
+            # flush the print buffer when full
+            foreach my $member (keys %{ $round }) {
+                if ($printflushcnt == 2) {
+                    print "Hier: @to_print\n";
+                    &formats($options, \@to_print);
+                    write GAMEPRINT;
+                    @to_print = ();
+                    $printoutcnt++;
+                    $printflushcnt = 0;
+                    DEBUG("Flushed to print file $printfile.");
+                }
                 
+                # print out if one page is full
+                if ((defined $options->{r} and $printoutcnt == 6)
+                    or (!defined $options->{r} and $printoutcnt == 7)) {
+                    close GAMEPRINT;
+                    my $jobid = $printer->printFile($printfile,
+                            $printfile) unless defined $options->{s};
+                    push(@printfiles, $printfile);
+                    DEBUG("Printed out print file $printfile with jobid $jobid.")
+                        unless $options->{s};
+                    $printfile = sprintf("%02d.p", ++$printfilecnt);
+                    open(GAMEPRINT, ">>", $printfile) 
+                        or die("Couldn't open print file $printfile: $!\n");
+                    $printoutcnt = 0;
+                }
+
+                # create a game file
+                my $gamefile = sprintf("%02d.s", ++$gamecount);
+                open(GAMEFILE, ">", $gamefile)
+                    or die("Couldn't open game file $gamefile: $!\n");
+                print(GAMEFILE "$member | $round->{$member}\n")
+                    and push(@gamefiles, $gamefile);
+
+                # fill the print buffer
+                my $table = shift @tables;
+                push(@tables, $table);
+                push(@to_print, $groupname, $roundcnt, $table,
+                        substr($groupfile, 0, 2) . $gamecount,
+                        $member, $round->{$member});
+                $printflushcnt++;
+            }
+            $roundcnt++;
+        }
+
+        # and now tidy up
+        (my $groupdir = $groupfile) =~ s/\.g/\.d/;
+        mkdir($groupdir, 0755)
+            or die("Couldn't make the group directory: $!\n");
+        foreach my $gamefile (@gamefiles) {
+           rename($gamefile, File::Spec->catfile($groupdir, $gamefile))
+                or die("Couldn't move $gamefile to $groupdir: $!\n");
+        }
+        DEBUG("Moved the game files to the group directory $groupdir.");
+        if (defined $options->{s}) {
+            foreach my $printfile (@printfiles) {
+                rename($printfile,
+                        File::Spec->catfile($groupdir, $printfile))
+                  or die("Couldn't move $printfile to $groupdir: $!\n");
+            }
+            DEBUG("Moved the print files to the group directory $groupdir.");
+        } else {
+            unlink(@printfiles)
+                or warn("Couldn't delete some print files.\n");
+            DEBUG("Deleted the print files.");
+        }
+    }
+}
+
+                 
 
 # the subroutine for creating the group files
 sub create_groupfiles {
@@ -182,46 +262,60 @@ sub create_groupfiles {
 # the subroutine which declares the formats
 # I do it in this way since I don't know another way to manage the
 # fact with the lexical variables.
-sub &formats {
+sub formats {
     my $options  = shift;
-    my $grpname1 = shift;
-    my $grpname2 = shift;
-    my $table1   = shift;
-    my $table2   = shift;
-    my $id1      = shift;
-    my $id2      = shift;
-    my $player1  = shift;
-    my $player2  = shift;
-    my $player3  = shift;
-    my $player4  = shift;
+    my $to_print = shift;
+#    @_           = @{ $to_print };
+#    print "@_\n";
+    print @$to_print;
+    my $grpname1 = shift @$to_print;
+    my $round1   = shift @$to_print;
+    my $table1   = shift @$to_print;
+    my $id1      = shift @$to_print;
+    my $player1  = shift @$to_print;
+    my $player2  = shift @$to_print;
+    my $grpname2 = shift @$to_print;
+    my $round2   = shift @$to_print;
+    my $table2   = shift @$to_print;
+    my $id2      = shift @$to_print;
+    my $player3  = shift @$to_print;
+    my $player4  = shift @$to_print;
 
     if (defined $options->{r}) {
-        format GAMEPRINT =
-        Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<< Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<<
-        $$grpname1,               $$table1, $$id1,   $$grpname1,               $$table1, $$id1
-        ----------------------+--------------------- ----------------------+---------------------
-        @|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
-        $$player1,             $$player2,            $$player3,            $$player4
-        ----------------------+--------------------- ----------------------+---------------------
-                              |                                            |
-                              |                                            |
-                              |                                            |
-                              |                                            |
-                              |                                            |
-        ----------------------+--------------------- ----------------------+---------------------
-        .
+format GAMEPRINT =
+Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+       $grpname1,                                   $grpname2
+Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
+       $round1,     $table1,           $id1,        $round2,     $table2,            $id2
+----------------------+--------------------- ----------------------+---------------------
+@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+$player1,              $player2,             $player3,              $player4
+----------------------+--------------------- ----------------------+---------------------
+                      |                                            |
+                      |                                            |
+                      |                                            |
+                      |                                            |
+                      |                                            |
+----------------------+--------------------- ----------------------+---------------------
+.
     } else {
-        format GAMEPRINT =
-        Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<< Group: @<<<<<<<<<<<<<<<<< Table: @< ID: @<<<
-        $$grpname1,               $$table1, $$id1,   $$grpname1,               $$table1, $$id1
-        ----------------------+--------------------- ----------------------+---------------------
-        @|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
-        $$player1,             $$player2,            $$player3,             $$player4
-        ----------------------+--------------------- ----------------------+---------------------
-                              |                                            |
-                              |                                            |
-                              |                                            |
-        ----------------------+--------------------- ----------------------+---------------------
-        .
+format GAMEPRINT =
+Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+       $grpname1,                                   $grpname2
+Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
+       $round1,     $table1,           $id1,        $round2,     $table2,            $id2
+----------------------+--------------------- ----------------------+---------------------
+@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+$player1,              $player2,             $player3,              $player4
+----------------------+--------------------- ----------------------+---------------------
+                      |                                            |
+                      |                                            |
+                      |                                            |
+----------------------+--------------------- ----------------------+---------------------
+.
     }
 }
+
+# die lexikalischen Variablen brauchen einen größeren Geltungsbereich
+
+# bei ungeraden Zahlen hauts nicht hin
