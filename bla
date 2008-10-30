@@ -109,8 +109,6 @@ sub process_group_files {
     my $options    = shift;
     my $printer    = shift;
     my $groupfiles = shift;
-    my @to_print1;
-    my @to_print2;
 
     # process the group files one by one
     foreach my $groupfile (@$groupfiles) {
@@ -156,42 +154,46 @@ sub process_group_files {
         # create the game files and the files to print
         my @gamefiles;
         my @printfiles;
-        my $gamecount;
+        my @to_print;
+        my $gamecount = 0;
         my $printflushcnt = 0;
         my $printoutcnt = 0;
-        my $printfilecnt;
-        my $roundcnt;
+        my $printfilecnt = 0;
+        my $roundcnt = 1;
        
-        # depending on the number of winning sets
-        {
-        no strict 'refs';
-
-        my $printhandlenm = 
-        defined $options->{r} ?
-        "GAMEPRINTG"    :
-        "GAMEPRINTK";
-        
         # initialisation of printing things 
         $printer->addOption("cpi", 12) unless defined $options->{s};
         my $printfile = sprintf("%02d.p", ++$printfilecnt);
-        open($printhandlenm, ">>", $printfile) 
+        open(GAMEPRINT, ">>", $printfile) 
             or die("Couldn't open print file $printfile: $!\n");
 
-
         foreach my $round (@schedule) {
-            $roundcnt++;
-            my $membercnt;
-            DEBUG("Roundcnt: $roundcnt");
-            my $schedkeynr = @schedule;
-            DEBUG("Schedknr: $schedkeynr");
+            # flush the print buffer when full
             foreach my $member (keys %{ $round }) {
-                $membercnt++;
-
-                #--------------------------------------------#
-                DEBUG("Membercnt: $membercnt");
-                my $bla = (keys %$round);
-                DEBUG("Keys: $bla");
-                #--------------------------------------------#
+                if ($printflushcnt == 2) {
+                    print "Hier: @to_print\n";
+                    &formats($options, \@to_print);
+                    write GAMEPRINT;
+                    @to_print = ();
+                    $printoutcnt++;
+                    $printflushcnt = 0;
+                    DEBUG("Flushed to print file $printfile.");
+                }
+                
+                # print out if one page is full
+                if ((defined $options->{r} and $printoutcnt == 6)
+                    or (!defined $options->{r} and $printoutcnt == 7)) {
+                    close GAMEPRINT;
+                    my $jobid = $printer->printFile($printfile,
+                            $printfile) unless defined $options->{s};
+                    push(@printfiles, $printfile);
+                    DEBUG("Printed out print file $printfile with jobid $jobid.")
+                        unless $options->{s};
+                    $printfile = sprintf("%02d.p", ++$printfilecnt);
+                    open(GAMEPRINT, ">>", $printfile) 
+                        or die("Couldn't open print file $printfile: $!\n");
+                    $printoutcnt = 0;
+                }
 
                 # create a game file
                 my $gamefile = sprintf("%02d.s", ++$gamecount);
@@ -203,46 +205,12 @@ sub process_group_files {
                 # fill the print buffer
                 my $table = shift @tables;
                 push(@tables, $table);
-                push(@to_print1, $groupname, $roundcnt, $table,
+                push(@to_print, $groupname, $roundcnt, $table,
                         substr($groupfile, 0, 2) . $gamecount,
-                        $member, $round->{$member})
-                    if $printflushcnt == 0;
-                push(@to_print2, $groupname, $roundcnt, $table,
-                        substr($groupfile, 0, 2) . $gamecount,
-                        $member, $round->{$member})
-                    if $printflushcnt == 1;
-               
-                # flush the buffer when full
-                if ($printflushcnt == 2 or
-                        ($membercnt == keys %$round
-                         and  $roundcnt == @schedule)) {
-                    write $printhandlenm;
-                    @to_print1 = ();
-                    @to_print2 = ();
-                    $printoutcnt++;
-                    $printflushcnt = 0;
-                    DEBUG("Flushed to print file $printfile.");
-                }
-                
-                # print out if one page is full
-                if ((defined $options->{r} and $printoutcnt == 6)
-                    or (!defined $options->{r} and $printoutcnt == 7)
-                    or ($membercnt == keys %$round
-                         and  $roundcnt == @schedule)) {
-                    close $printhandlenm;
-                    my $jobid = $printer->printFile($printfile,
-                            $printfile) unless defined $options->{s};
-                    DEBUG("Printed out print file $printfile with jobid $jobid.")
-                        unless $options->{s};
-                    push(@printfiles, $printfile);
-                    $printfile = sprintf("%02d.p", ++$printfilecnt);
-                    open($printhandlenm, ">>", $printfile) 
-                        or die("Couldn't open print file $printfile: $!\n");
-                    $printoutcnt = 0;
-                }
-            $printflushcnt++;
+                        $member, $round->{$member});
+                $printflushcnt++;
             }
-        }
+            $roundcnt++;
         }
 
         # and now tidy up
@@ -266,38 +234,6 @@ sub process_group_files {
                 or warn("Couldn't delete some print files.\n");
             DEBUG("Deleted the print files.");
         }
-
-format GAMEPRINTG =
-Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-shift @to_print1,                                    shift @to_print2
-Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
-shift @to_print1, shift @to_print1, shift @to_print1, shift @to_print2, shift @to_print2, shift @to_print2
-----------------------+--------------------- ----------------------+---------------------
-@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
-shift @to_print1,      shift @to_print1,      shift @to_print2,       shift @to_print2
-----------------------+--------------------- ----------------------+---------------------
-                      |                                            |
-                      |                                            |
-                      |                                            |
-                      |                                            |
-                      |                                            |
-----------------------+--------------------- ----------------------+---------------------
-.
-
-format GAMEPRINTK =
-Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-       shift @to_print1,                             shift @to_print2
-Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
-shift @to_print1, shift @to_print1, shift @to_print1, shift @to_print2, shift @to_print2, shift @to_print2
-----------------------+--------------------- ----------------------+---------------------
-@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
-shift @to_print1,      shift @to_print1,      shift @to_print2,       shift @to_print2
-----------------------+--------------------- ----------------------+---------------------
-                      |                                            |
-                      |                                            |
-                      |                                            |
-----------------------+--------------------- ----------------------+---------------------
-.
     }
 }
 
@@ -326,6 +262,60 @@ sub create_groupfiles {
 # the subroutine which declares the formats
 # I do it in this way since I don't know another way to manage the
 # fact with the lexical variables.
+sub formats {
+    my $options  = shift;
+    my $to_print = shift;
+#    @_           = @{ $to_print };
+#    print "@_\n";
+    print @$to_print;
+    my $grpname1 = shift @$to_print;
+    my $round1   = shift @$to_print;
+    my $table1   = shift @$to_print;
+    my $id1      = shift @$to_print;
+    my $player1  = shift @$to_print;
+    my $player2  = shift @$to_print;
+    my $grpname2 = shift @$to_print;
+    my $round2   = shift @$to_print;
+    my $table2   = shift @$to_print;
+    my $id2      = shift @$to_print;
+    my $player3  = shift @$to_print;
+    my $player4  = shift @$to_print;
+
+    if (defined $options->{r}) {
+format GAMEPRINT =
+Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+       $grpname1,                                   $grpname2
+Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
+       $round1,     $table1,           $id1,        $round2,     $table2,            $id2
+----------------------+--------------------- ----------------------+---------------------
+@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+$player1,              $player2,             $player3,              $player4
+----------------------+--------------------- ----------------------+---------------------
+                      |                                            |
+                      |                                            |
+                      |                                            |
+                      |                                            |
+                      |                                            |
+----------------------+--------------------- ----------------------+---------------------
+.
+    } else {
+format GAMEPRINT =
+Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+       $grpname1,                                   $grpname2
+Round: @<<   Table: @<             ID: @<<<  Round: @<<   Table: @<              ID: @<<<
+       $round1,     $table1,           $id1,        $round2,     $table2,            $id2
+----------------------+--------------------- ----------------------+---------------------
+@|||||||||||||||||||| |@|||||||||||||||||||  @|||||||||||||||||||| |@||||||||||||||||||||
+$player1,              $player2,             $player3,              $player4
+----------------------+--------------------- ----------------------+---------------------
+                      |                                            |
+                      |                                            |
+                      |                                            |
+----------------------+--------------------- ----------------------+---------------------
+.
+    }
+}
+
 # die lexikalischen Variablen brauchen einen größeren Geltungsbereich
 
 # bei ungeraden Zahlen hauts nicht hin
