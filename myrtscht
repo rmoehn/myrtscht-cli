@@ -61,11 +61,14 @@ if (defined $Options{"p" or "a" or "o"} and !defined $Options{s}) {
 
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
-    DEBUG("Invoking subroutine to create new tournament.");
+    DEBUG "Invoking subroutine to create new tournament.";
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{p}) {
-    DEBUG("Invoking subroutine to process the group files.");
+    DEBUG "Invoking subroutine to process the group files.";
     &process_group_files(\$Etcpath, \%Options, $Printer, \@ARGV);
+} elsif (defined $Options{a}) {
+    DEBUG "Invoking subroutine to preprocess the game files.";
+    &preprocess_game_files(\$Etcpath, \%Options, \@ARGV);
 }
 
 # the subroutine invoked if the option -n is defined
@@ -84,7 +87,7 @@ sub create_new_tournament {
                 $date[2] + 1900);
     mkdir($tournam_dir, 0755)
         or die("Couldn't make directory $tournam_dir: $!\n");
-    DEBUG("Generated new tournament directory: $tournam_dir.");
+    DEBUG "Generated new tournament directory: $tournam_dir.";
     chdir $tournam_dir
         or die "Couldn't change into directory $tournam_dir: $!\n";
     DEBUG "Changed into directory $tournam_dir.";
@@ -254,6 +257,112 @@ sub process_group_files {
     }
 }
 
+# the subroutine invoked if the option -a is defined
+# But it just preprocesses and gives the the files directly to the
+# true processing subroutine.
+sub preprocess_game_files {
+    my $etcpath         = shift;
+    my $options         = shift;
+    my $file_containing = shift;
+    my @gamefiles;
+
+    # process the input and filtering out just the game files to
+    # to the following routine
+    if (-d $file_containing->[0]) {
+        DEBUG "We have a directory with game files given.";
+        opendir(GROUPDIR, $file_containing->[0])
+            or die "Couldn't open $file_containing->[0]: $!\n";
+        @$file_containing = readdir GROUPDIR;
+        close GROUPDIR;
+        chdir $file_containing->[0]
+            or die "Couldn't change into $file_containing->[0]: $!\n";
+    } else {
+         DEBUG "We have a list of game files given.";
+    }
+    for my $file (@$file_containing) {
+        next unless $file =~ /.s$/;
+        push(@gamefiles, $file);
+    }
+    DEBUG "Giving game files @gamefiles to the game file processor.";
+    &process_game_files($etcpath, $options, \@gamefiles);
+}
+
+# process the game files
+sub process_game_files {
+    my $etcpath   = shift;
+    my $options   = shift;
+    my $gamefiles = shift;
+    my %players;
+
+    # process the game file and create the data structure
+    for my $gamefile (@$gamefiles) {
+        open(GAMEFILE, $gamefile)
+            or die "Couldn't open game file $gamefile: $!\n";
+        while (<GAMEFILE>) {
+            my($name1, $name2);
+
+            next if /#/;
+            ($name1, $name2)   = /([^\d]+)\|([^\d+])/;
+            ($players{$name1}{balls}, $players{$name2}{balls})
+                = /(\d+)[^\d]+(\d+)/;
+
+            $players{$name1}{fails} = $players{$name2}{balls};
+            $players{$name2}{fails} = $players{$name1}{balls};
+
+            if ($players{$name1}{balls} > $players{$name2}{balls}) {
+                $players{$name1}{sets_won}++;
+                $players{$name2}{sets_lost}++;
+            } else {
+                $players{$name2}{sets_won}++;
+                $players{$name1}{sets_lost}++;
+            }
+            
+            if ($players{$name1}{sets_won} 
+                    > $players{$name2}{sets_won}) {
+                $players{$name1}{wins}++;
+                $players{$name2}{losts}++;
+            } else {
+                $players{$name2}{wins}++;
+                $players{$name1}{losts}++;
+            }
+        }
+    }
+    close GAMEFILE;
+    DEBUG "Processed the game file.";
+
+    # sort the people according to their games
+    my @ranking = sort {
+        $players{$a}{wins}      <=> $players{$b}{wins}      or
+        $players{$b}{losts}     <=> $players{$a}{losts}     or
+        $players{$a}{sets_won}  <=> $players{$b}{sets_won}  or
+        $players{$b}{sets_lost} <=> $players{$a}{sets_lost} or
+        $players{$a}{balls}     <=> $players{$b}{balls}     or
+        $players{$b}{fails}     <=> $players{$a}{fails}
+    } keys %players;
+    DEBUG "Sorted all the stuff.";
+    
+    # generate the ranking file
+    open(RANKING, ">", "ranking")
+        or die "Couldn't open \"ranking\" for writing: $!\n";
+    printf RANKING ("%4s %-21s\t%-11s\t%-11s\t%-11s\n",
+            "Rank", "Name", "Games", "Sets", "Balls");
+    my $rank = 1;
+    foreach my $player (@ranking) {
+        printf RANKING (
+                    "%3d. %-21s\t%4d : %4d\t%4s : %4s\t%4s : %4s\n",
+                    $rank++, $player,
+                    $players{$player}{wins},
+                    $players{$player}{losts},
+                    $players{$player}{sets_won},
+                    $players{$player}{sets_lost},
+                    $players{$player}{balls},
+                    $players{$player}{fails}
+                    );
+    }
+    DEBUG "Generated the ranking file.";
+}
+
+
 # the subroutine for creating the group files
 sub create_groupfiles {
     my $etcpath     = shift;
@@ -273,3 +382,5 @@ sub create_groupfiles {
     }
     DEBUG "Wrote template to group files: @$groupfnames";
 }
+
+# TODO aufpassen, wenn -s definiert ist
