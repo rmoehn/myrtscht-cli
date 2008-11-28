@@ -293,31 +293,55 @@ sub process_game_files {
     my $options   = shift;
     my $gamefiles = shift;
     my %players;
+    my $run;
 
     # process the game file and create the data structure
     for my $gamefile (@$gamefiles) {
+        print $run++ . "$gamefile\n";
         open(GAMEFILE, $gamefile)
             or die "Couldn't open game file $gamefile: $!\n";
+        my($name1, $name2);
+        my $numcont;
+        my $run2;
+
         while (<GAMEFILE>) {
-            my($name1, $name2);
-
+            print $run2++ . "\n";
+            chomp;
             next if /#/;
-            ($name1, $name2)   = /([^\d]+)\|([^\d+])/;
-            ($players{$name1}{balls}, $players{$name2}{balls})
-                = /(\d+)[^\d]+(\d+)/;
-
-            $players{$name1}{fails} = $players{$name2}{balls};
-            $players{$name2}{fails} = $players{$name1}{balls};
-
-            if ($players{$name1}{balls} > $players{$name2}{balls}) {
-                $players{$name1}{sets_won}++;
-                $players{$name2}{sets_lost}++;
+            if (/(\D+) \| (\D+)/) {
+                ($name1, $name2) = ($1, $2);
+                 DEBUG "The players are $name1 and $name2.";
+                 $numcont = 0;
             } else {
-                $players{$name2}{sets_won}++;
-                $players{$name1}{sets_lost}++;
+                ($players{$name1}{balls}, $players{$name2}{balls})
+                    = /(\d+)\D+(\d+)/;
+                DEBUG "Result: $1 : $2";
+                $numcont = 1;
             }
-            
-            if ($players{$name1}{sets_won} 
+
+            $players{$name1}{all_fails} += $players{$name2}{balls},
+            $players{$name2}{all_fails} += $players{$name1}{balls},
+            $players{$name1}{all_balls} += $players{$name1}{balls},
+            $players{$name2}{all_balls} += $players{$name2}{balls}
+                if $numcont;
+
+            if ($numcont and
+                    $players{$name1}{balls} > $players{$name2}{balls}) {
+                $players{$name1}{sets_won}++;
+                $players{$name1}{all_sets_won}++;
+                $players{$name2}{sets_lost}++;
+                $players{$name2}{all_sets_lost}++;
+            } elsif ($numcont) {
+                $players{$name2}{sets_won}++;
+                $players{$name2}{all_sets_won}++;
+                $players{$name1}{sets_lost}++;
+                $players{$name1}{all_sets_lost}++;
+            }
+            $players{$name1}{balls} = 0; # Just for this game
+            $players{$name2}{balls} = 0; #
+        }
+
+            if ($players{$name1}{sets_won}
                     > $players{$name2}{sets_won}) {
                 $players{$name1}{wins}++;
                 $players{$name2}{losts}++;
@@ -325,19 +349,25 @@ sub process_game_files {
                 $players{$name2}{wins}++;
                 $players{$name1}{losts}++;
             }
-        }
+            $players{$name1}{sets_won} = 0; # Just for this game.
+            $players{$name2}{sets_won} = 0; #
     }
+    # I know, this whole thing is very very ugly. But how ugly
+    # would it be  if there were no hashes? On top of that it
+    # produces occasional warnings. But I think, if it
+    # wouldn't produce occasional warnings, it would also be
+    # far more ugly.
     close GAMEFILE;
     DEBUG "Processed the game file.";
 
     # sort the people according to their games
     my @ranking = sort {
-        $players{$a}{wins}      <=> $players{$b}{wins}      or
-        $players{$b}{losts}     <=> $players{$a}{losts}     or
-        $players{$a}{sets_won}  <=> $players{$b}{sets_won}  or
-        $players{$b}{sets_lost} <=> $players{$a}{sets_lost} or
-        $players{$a}{balls}     <=> $players{$b}{balls}     or
-        $players{$b}{fails}     <=> $players{$a}{fails}
+        $players{$b}{wins}          <=> $players{$a}{wins}          or
+        $players{$a}{losts}         <=> $players{$b}{losts}         or
+        $players{$b}{all_sets_won}  <=> $players{$a}{all_sets_won}  or
+        $players{$a}{all_sets_lost} <=> $players{$b}{all_sets_lost} or
+        $players{$b}{all_balls}     <=> $players{$a}{all_balls}     or
+        $players{$a}{all_fails}     <=> $players{$b}{all_fails}
     } keys %players;
     DEBUG "Sorted all the stuff.";
     
@@ -353,10 +383,10 @@ sub process_game_files {
                     $rank++, $player,
                     $players{$player}{wins},
                     $players{$player}{losts},
-                    $players{$player}{sets_won},
-                    $players{$player}{sets_lost},
-                    $players{$player}{balls},
-                    $players{$player}{fails}
+                    $players{$player}{all_sets_won},
+                    $players{$player}{all_sets_lost},
+                    $players{$player}{all_balls},
+                    $players{$player}{all_fails}
                     );
     }
     DEBUG "Generated the ranking file.";
