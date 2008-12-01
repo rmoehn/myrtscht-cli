@@ -81,7 +81,7 @@ sub create_new_tournament {
     {
     my @date           = (localtime)[4,3,5];
     my $tournam_dir = 
-        shift || sprintf(
+        $options->{n} || sprintf(
                 "Tournament-%02d%02d%d",
                 map($_ + 1,  @date[0,1]),
                 $date[2] + 1900);
@@ -125,8 +125,8 @@ sub process_group_files {
     my $gamesheets = sprintf("%d", 67 / $gamesheetheigth);
     my $newlines = 67 - $gamesheets * $gamesheetheigth;
     DEBUG "There will be $gamesheets per page, so we have to insert "
-        . "$newlines newlines after them. They are $gamesheetheigth"
-        . " lines high.";
+        . "$newlines newlines after them. They are $gamesheetheigth "
+        . "lines high.";
 
     # the format for the printout; Alas, I can't declare the
     # variables in a smaller scope.
@@ -140,9 +140,9 @@ sub process_group_files {
         . '-' x 22 . '+' . '-' x 21 . "\n"
         . '@' . '|' x 20 . ' |' . '@' . '|' x 20 . "\n"
         . '$member1, $member2' . "\n"
-        . '-' x 22 . '+' . '-' x 21 . "\n"
+        . '-'  x 22 . '+' . '-' x 21 . "\n"
         . (' ' x 22 . '|' . ' ' x 21 . "\n") x $maxsetnr
-        . '-' x 22 . '+' . '-' x 21 . "\n"
+        . '-'  x 22 . '+' . '-' x 21 . "\n"
         . ".\n";
     print $printoutform if defined $options->{d};
     eval $printoutform;
@@ -183,7 +183,6 @@ sub process_group_files {
         # initialize the printing things
         $printer->addOption("cpi", 13),
         $printer->addOption("columns", 2),
-        $printer->addOption("nowrap")
             unless defined $options->{s};
         open(GAMEPRINT, ">>", $printfile)
             or die "Couldn't open $printfile: $!\n";
@@ -270,12 +269,13 @@ sub preprocess_game_files {
     # to the following routine
     if (-d $file_containing->[0]) {
         DEBUG "We have a directory with game files given.";
+        my $dirname = $file_containing->[0];
         opendir(GROUPDIR, $file_containing->[0])
             or die "Couldn't open $file_containing->[0]: $!\n";
         @$file_containing = readdir GROUPDIR;
         close GROUPDIR;
-        chdir $file_containing->[0]
-            or die "Couldn't change into $file_containing->[0]: $!\n";
+        chdir $dirname
+            or die "Couldn't change into $dirname: $!\n";
     } else {
          DEBUG "We have a list of game files given.";
     }
@@ -297,7 +297,6 @@ sub process_game_files {
 
     # process the game file and create the data structure
     for my $gamefile (@$gamefiles) {
-        print $run++ . "$gamefile\n";
         open(GAMEFILE, $gamefile)
             or die "Couldn't open game file $gamefile: $!\n";
         my($name1, $name2);
@@ -305,7 +304,6 @@ sub process_game_files {
         my $run2;
 
         while (<GAMEFILE>) {
-            print $run2++ . "\n";
             chomp;
             next if /#/;
             if (/(\D+) \| (\D+)/) {
@@ -322,7 +320,11 @@ sub process_game_files {
             $players{$name1}{all_fails} += $players{$name2}{balls},
             $players{$name2}{all_fails} += $players{$name1}{balls},
             $players{$name1}{all_balls} += $players{$name1}{balls},
-            $players{$name2}{all_balls} += $players{$name2}{balls}
+            $players{$name2}{all_balls} += $players{$name2}{balls},
+            $players{$name1}{ball_difference} +=
+              ($players{$name1}{balls} - $players{$name2}{balls}),
+            $players{$name2}{ball_difference} +=
+              ($players{$name2}{balls} - $players{$name1}{balls}),
                 if $numcont;
 
             if ($numcont and
@@ -349,6 +351,12 @@ sub process_game_files {
                 $players{$name2}{wins}++;
                 $players{$name1}{losts}++;
             }
+
+            $players{$name1}{set_difference} +=
+              ($players{$name1}{sets_won} - $players{$name2}{sets_won});
+            $players{$name2}{set_difference} +=
+              ($players{$name2}{sets_won} - $players{$name1}{sets_won});
+
             $players{$name1}{sets_won} = 0; # Just for this game.
             $players{$name2}{sets_won} = 0; #
     }
@@ -362,31 +370,32 @@ sub process_game_files {
 
     # sort the people according to their games
     my @ranking = sort {
-        $players{$b}{wins}          <=> $players{$a}{wins}          or
-        $players{$a}{losts}         <=> $players{$b}{losts}         or
-        $players{$b}{all_sets_won}  <=> $players{$a}{all_sets_won}  or
-        $players{$a}{all_sets_lost} <=> $players{$b}{all_sets_lost} or
-        $players{$b}{all_balls}     <=> $players{$a}{all_balls}     or
-        $players{$a}{all_fails}     <=> $players{$b}{all_fails}
+        $players{$b}{wins}           <=> $players{$a}{wins}           or
+        $players{$a}{losts}          <=> $players{$b}{losts}          or
+        $players{$b}{set_difference} <=> $players{$a}{set_difference} or
+        $players{$b}{ball_difference} <=> $players{$a}{ball_difference}
     } keys %players;
     DEBUG "Sorted all the stuff.";
     
     # generate the ranking file
     open(RANKING, ">", "ranking")
         or die "Couldn't open \"ranking\" for writing: $!\n";
-    printf RANKING ("%4s %-21s\t%-11s\t%-11s\t%-11s\n",
-            "Rank", "Name", "Games", "Sets", "Balls");
+    printf RANKING ("%4s %-21s\t%-11s\t%-11s\t%-5s\t%-11s\t%-5s\n",
+            "Rank", "Name", "Games", "Sets", "SD", "Balls", "BD");
     my $rank = 1;
     foreach my $player (@ranking) {
         printf RANKING (
-                    "%3d. %-21s\t%4d : %4d\t%4s : %4s\t%4s : %4s\n",
+                    "%3d. %-21s\t%4d : %4d\t%4s : %4s\t%5s\t"
+                  . "%4s : %4s\t%5s\n",
                     $rank++, $player,
-                    $players{$player}{wins},
-                    $players{$player}{losts},
-                    $players{$player}{all_sets_won},
-                    $players{$player}{all_sets_lost},
-                    $players{$player}{all_balls},
-                    $players{$player}{all_fails}
+                    $players{$player}{wins}            || 0,
+                    $players{$player}{losts}           || 0,
+                    $players{$player}{all_sets_won}    || 0,
+                    $players{$player}{all_sets_lost}   || 0,
+                    $players{$player}{set_difference}  || 0,
+                    $players{$player}{all_balls}       || 0,
+                    $players{$player}{all_fails}       || 0,
+                    $players{$player}{ball_difference} || 0,
                     );
     }
     DEBUG "Generated the ranking file.";
@@ -398,17 +407,16 @@ sub create_groupfiles {
     my $etcpath     = shift;
     my $groupfnames = shift;
 
-    # read the template for the group files
-    open(GROUPTPL, "<", File::Spec->catfile($$etcpath, "group.tpl"))
-        or die("Couldn't open the group template file: $!\n");
-    my @grouptpl = <GROUPTPL>;
-    close GROUPTPL;
-
     # write the template to all the group files
     foreach my $groupfname (@$groupfnames) {
         open(GROUPFILE, ">", $groupfname)
             or die("Couldn't open $groupfname: $!\n");
-        print(GROUPFILE @grouptpl);
+        print GROUPFILE <<"EOF";
+Name:
+Tables:
+Members:
+
+EOF
     }
     DEBUG "Wrote template to group files: @$groupfnames";
 }
