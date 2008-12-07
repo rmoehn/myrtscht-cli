@@ -306,7 +306,7 @@ sub process_game_files {
         while (<GAMEFILE>) {
             chomp;
             next if /#/;
-            if (/(\D+) \| (\D+)/) {
+            if (/(.+) \| (.+)/) {
                 ($name1, $name2) = ($1, $2);
                  DEBUG "The players are $name1 and $name2.";
                  $numcont = 0;
@@ -420,5 +420,3 @@ EOF
     }
     DEBUG "Wrote template to group files: @$groupfnames";
 }
-
-# TODO aufpassen, wenn -s definiert ist
