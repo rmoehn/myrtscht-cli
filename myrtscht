@@ -6,7 +6,6 @@ use strict;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
 use File::Spec;
-use File::Temp;
 use Getopt::Long qw/ :config no_ignore_case bundling /;
 use Games::Tournament::RoundRobin;
 use Net::CUPS;
@@ -23,7 +22,6 @@ GetOptions(
         'g:s' => \$Options{g},
         'n:s' => \$Options{n},
         'd:s' => \$Options{d},
-        'o:s' => \$Options{o},
         'P:s' => \$Options{P},
 );
 
@@ -31,7 +29,6 @@ GetOptions(
 my $Etcpath = File::Spec->catfile(
         File::Spec->rootdir(),
         qw/ home moses Perl Myrtscht etc /);
-my $Printer;
 
 # initialize the logger or not
 if (defined $Options{d}) {
@@ -43,7 +40,7 @@ if (defined $Options{d}) {
         File::Spec->catfile($Etcpath, 'log.conf');
     Log::Log4perl->init($logfile);
 }
-DEBUG "Initialized.";
+INFO "Initialized.";
 
 # little debbugging help
 foreach my $option (keys %Options) {
@@ -51,23 +48,15 @@ foreach my $option (keys %Options) {
         if defined $Options{$option};
 }
 
-# invoke the spooler or not
-if (defined $Options{"p" or "a" or "o"} and !defined $Options{s}) {
-    my $cups = Net::CUPS->new()
-     or warn "Couldn't get a nice CUPS - we won't be able to print.\n";
-    $Printer = $cups->getDestination($Options{P})
-     or warn "Couldn't get your printer's destination: You have to specify another.\n";
-} 
-
 # invoke the subroutines corresponding to the options
 if (defined $Options{n}) {
-    DEBUG "Invoking subroutine to create new tournament.";
+    INFO "Invoking subroutine to create new tournament.";
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{p}) {
-    DEBUG "Invoking subroutine to process the group files.";
+    INFO "Invoking subroutine to process the group files.";
     &process_group_files(\$Etcpath, \%Options, $Printer, \@ARGV);
 } elsif (defined $Options{a}) {
-    DEBUG "Invoking subroutine to preprocess the game files.";
+    INFO "Invoking subroutine to preprocess the game files.";
     &preprocess_game_files(\$Etcpath, \%Options, \@ARGV);
 }
 
@@ -86,7 +75,7 @@ sub create_new_tournament {
                 map($_ + 1,  @date[0,1]),
                 $date[2] + 1900);
     mkdir($tournam_dir, 0755)
-        or die("Couldn't make directory $tournam_dir: $!\n");
+        or die "Couldn't make directory $tournam_dir: $!\n";
     DEBUG "Generated new tournament directory: $tournam_dir.";
     chdir $tournam_dir
         or die "Couldn't change into directory $tournam_dir: $!\n";
@@ -104,6 +93,7 @@ sub create_new_tournament {
     } else {
         &create_groupfiles($etcpath, $specified_groupfnames);
     }
+    INFO "Created the group files.";
 }
 
 # the subroutine invoked if the option -p is defined
@@ -120,10 +110,10 @@ sub process_group_files {
     # must be the number of lines per sheet of A4 paper as thou have
     # to use A4 paper with a number of 13 chars per column to get 
     # nice results.
-    my $maxsetnr = ($options->{r} || 2) * 2 - 1;
+    my $maxsetnr        = ($options->{r} || 2) * 2 - 1;
     my $gamesheetheigth = $maxsetnr + 6;
-    my $gamesheets = sprintf("%d", 67 / $gamesheetheigth);
-    my $newlines = 67 - $gamesheets * $gamesheetheigth;
+    my $gamesheets      = sprintf("%d", 67 / $gamesheetheigth);
+    my $newlines        = 67 - $gamesheets * $gamesheetheigth;
     DEBUG "There will be $gamesheets per page, so we have to insert "
         . "$newlines newlines after them. They are $gamesheetheigth "
         . "lines high.";
@@ -144,7 +134,7 @@ sub process_group_files {
         . (' ' x 22 . '|' . ' ' x 21 . "\n") x $maxsetnr
         . '-'  x 22 . '+' . '-' x 21 . "\n"
         . ".\n";
-    print $printoutform if defined $options->{d};
+    DEBUG $printoutform if defined $options->{d};
     eval $printoutform;
     die $@ if $@;
 
@@ -159,7 +149,7 @@ sub process_group_files {
         mkdir($groupdir, 0755)
             or die "Couldn't make directory $groupdir: $!\n";
         rename($groupfile, File::Spec->catfile($groupdir, $groupfile))
-            or die "Couldn't $groupfile to $groupdir: $!\n";
+            or die "Couldn't move $groupfile to $groupdir: $!\n";
         chdir $groupdir
             or die "Couldn't change into $groupdir: $!";
         DEBUG "Now in group directory $groupdir.";
@@ -167,23 +157,31 @@ sub process_group_files {
 
         # read the groupfile
         open(GROUPFILE, "<", $groupfile)
-            or die("Couldn't open group file $groupfile: $!\n");
+            or die "Couldn't open group file $groupfile: $!\n";
         chomp(my @gf_content = <GROUPFILE>);
-        close(GROUPFILE);
+        close GROUPFILE;
         DEBUG "Group file content: @gf_content";
-        $groupname = substr(shift @gf_content, 6);
+        $groupname  = substr(shift @gf_content, 6);
         DEBUG "The group is named $groupname.";
-        my @tables  = split(m([ ,;.:/]), substr(shift @gf_content, 8));
+        my @tables  = split(m([ ,;.:/]+), substr(shift @gf_content, 8));
         DEBUG "It plays at the tables @tables.";
         shift @gf_content;
         my @members = @gf_content;
         DEBUG "It consists of @members.";
-        @gf_content = undef;
+        undef @gf_content;
 
         # initialize the printing things
-        $printer->addOption("cpi", 13),
-        $printer->addOption("columns", 2),
-            unless defined $options->{s};
+        # invoke the spooler or not
+        unless (defined $options->{s}) {
+            my $cups = Net::CUPS->new()
+                or warn "Couldn't get a nice CUPS - we "
+                      . "won't be able to print.\n";
+            $printer = $cups->getDestination($options{P})
+                or warn "Couldn't get your printer's destination: "
+                      . "You have to specify another.\n";
+            $printer->addOption("cpi", 13);
+            $printer->addOption("columns", 2);
+        } 
         open(GAMEPRINT, ">>", $printfile)
             or die "Couldn't open $printfile: $!\n";
         select((select(GAMEPRINT), $|++)[0]);
@@ -254,6 +252,7 @@ sub process_group_files {
             or die "Couldn't change into $cwd: $!\n";
         DEBUG "Back in $cwd.";
     }
+    INFO "Created the schedule.";
 }
 
 # the subroutine invoked if the option -a is defined
@@ -263,10 +262,9 @@ sub preprocess_game_files {
     my $etcpath         = shift;
     my $options         = shift;
     my $file_containing = shift;
-    my @gamefiles;
 
     # process the input and filtering out just the game files to
-    # to the following routine
+    # give to the following routine
     if (-d $file_containing->[0]) {
         DEBUG "We have a directory with game files given.";
         my $dirname = $file_containing->[0];
@@ -277,12 +275,9 @@ sub preprocess_game_files {
         chdir $dirname
             or die "Couldn't change into $dirname: $!\n";
     } else {
-         DEBUG "We have a list of game files given.";
+        DEBUG "We have a list of game files given.";
     }
-    for my $file (@$file_containing) {
-        next unless $file =~ /.s$/;
-        push(@gamefiles, $file);
-    }
+    my @gamefiles = grep { /.s$/ } @$file_containing;
     DEBUG "Giving game files @gamefiles to the game file processor.";
     &process_game_files($etcpath, $options, \@gamefiles);
 }
@@ -293,7 +288,6 @@ sub process_game_files {
     my $options   = shift;
     my $gamefiles = shift;
     my %players;
-    my $run;
 
     # process the game file and create the data structure
     for my $gamefile (@$gamefiles) {
@@ -301,7 +295,6 @@ sub process_game_files {
             or die "Couldn't open game file $gamefile: $!\n";
         my($name1, $name2);
         my $numcont;
-        my $run2;
 
         while (<GAMEFILE>) {
             chomp;
@@ -366,7 +359,7 @@ sub process_game_files {
     # wouldn't produce occasional warnings, it would also be
     # far more ugly.
     close GAMEFILE;
-    DEBUG "Processed the game file.";
+    INFO "Processed the game files.";
 
     # sort the people according to their games
     my @ranking = sort {
@@ -382,12 +375,12 @@ sub process_game_files {
         or die "Couldn't open \"ranking\" for writing: $!\n";
     printf RANKING ("%4s %-21s\t%-11s\t%-11s\t%-5s\t%-11s\t%-5s\n",
             "Rank", "Name", "Games", "Sets", "SD", "Balls", "BD");
-    my $rank = 1;
+    my $rank;
     foreach my $player (@ranking) {
         printf RANKING (
                     "%3d. %-21s\t%4d : %4d\t%4s : %4s\t%5s\t"
                   . "%4s : %4s\t%5s\n",
-                    $rank++, $player,
+                    ++$rank, $player,
                     $players{$player}{wins}            || 0,
                     $players{$player}{losts}           || 0,
                     $players{$player}{all_sets_won}    || 0,
@@ -398,7 +391,7 @@ sub process_game_files {
                     $players{$player}{ball_difference} || 0,
                     );
     }
-    DEBUG "Generated the ranking file.";
+    INFO "Generated the ranking file.";
 }
 
 
@@ -410,7 +403,7 @@ sub create_groupfiles {
     # write the template to all the group files
     foreach my $groupfname (@$groupfnames) {
         open(GROUPFILE, ">", $groupfname)
-            or die("Couldn't open $groupfname: $!\n");
+            or die "Couldn't open $groupfname: $!\n";
         print GROUPFILE <<"EOF";
 Name:
 Tables:
