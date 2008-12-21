@@ -54,7 +54,7 @@ if (defined $Options{n}) {
     &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{p}) {
     INFO "Invoking subroutine to process the group files.";
-    &process_group_files(\$Etcpath, \%Options, $Printer, \@ARGV);
+    &process_group_files(\$Etcpath, \%Options, \@ARGV);
 } elsif (defined $Options{a}) {
     INFO "Invoking subroutine to preprocess the game files.";
     &preprocess_game_files(\$Etcpath, \%Options, \@ARGV);
@@ -100,7 +100,6 @@ sub create_new_tournament {
 sub process_group_files {
     my $etcpath    = shift;
     my $options    = shift;
-    my $printer    = shift;
     my $groupfiles = shift;
     my $cwd        = getcwd;
 
@@ -142,6 +141,7 @@ sub process_group_files {
     foreach my $groupfile (@$groupfiles) {
         my $printfile = "gamesheets";
         my $groupfnr = substr($groupfile, 0, 2);
+        my $printer;
 
         # manage the group directory
         {
@@ -176,7 +176,7 @@ sub process_group_files {
             my $cups = Net::CUPS->new()
                 or warn "Couldn't get a nice CUPS - we "
                       . "won't be able to print.\n";
-            $printer = $cups->getDestination($options{P})
+            $printer = $cups->getDestination($options->{P})
                 or warn "Couldn't get your printer's destination: "
                       . "You have to specify another.\n";
             $printer->addOption("cpi", 13);
