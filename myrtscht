@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 # all the nice modules
-use warnings;
 use strict;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
@@ -413,3 +412,5 @@ EOF
     }
     DEBUG "Wrote template to group files: @$groupfnames";
 }
+
+__END__
