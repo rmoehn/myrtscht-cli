@@ -2,6 +2,7 @@
 
 # all the nice modules
 use strict;
+#use warnings;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
 use File::Spec;
@@ -16,7 +17,6 @@ GetOptions(
         's'   => \$Options{s},
         'a'   => \$Options{a},
         'p'   => \$Options{p},
-        'b:s' => \$Options{b},
         'r:s' => \$Options{r},
         'g:s' => \$Options{g},
         'n:s' => \$Options{n},
@@ -82,15 +82,20 @@ sub create_new_tournament {
     }
    
     # write the group template into all the group files
-    if ($options->{g} or !defined $options->{g}) {
-        my $groupnr = $options->{g} || 10;
-        my @groupfiles;
-        for (my $i = 1; $i <= $groupnr; $i++) {
-            push(@groupfiles, sprintf("%02d.g", $i));
-        }
-        &create_groupfiles($etcpath, \@groupfiles);
-    } else {
-        &create_groupfiles($etcpath, $specified_groupfnames);
+    my $groupnr = $options->{g} || 10;
+    my @groupfiles;
+    for (my $i = 1; $i <= $groupnr; $i++) {
+        my $groupfname = sprintf("%02d.g", $i);
+        open(GROUPFILE, ">", $groupfname)
+            or die "Couldn't open $groupfname: $!\n";
+        print GROUPFILE <<"EOF";
+Name:
+Tables:
+Members:
+
+EOF
+    
+    DEBUG "Wrote template to group file: $groupfname";
     }
     INFO "Created the group files.";
 }
@@ -393,24 +398,286 @@ sub process_game_files {
     INFO "Generated the ranking file.";
 }
 
-
-# the subroutine for creating the group files
-sub create_groupfiles {
-    my $etcpath     = shift;
-    my $groupfnames = shift;
-
-    # write the template to all the group files
-    foreach my $groupfname (@$groupfnames) {
-        open(GROUPFILE, ">", $groupfname)
-            or die "Couldn't open $groupfname: $!\n";
-        print GROUPFILE <<"EOF";
-Name:
-Tables:
-Members:
-
-EOF
-    }
-    DEBUG "Wrote template to group files: @$groupfnames";
-}
-
 __END__
+
+=encoding utf8
+
+=head1 NAME
+
+myrtscht - My Round robin Tournament SCHeduling for Table tennis
+
+
+
+=head1 SYNOPSIS
+
+myrtscht B<-n> [I<name>] [B<-g> I<number>] [B<-d> [I<file>]]
+
+myrtscht B<-p> I<files> [B<-r> I<rounds>] [B<-s>] [B<-P> I<printer>] [B<-d> [I<file>]]
+
+myrtscht B<-a> I<files>/I<directory> [B<-d> [I<file>]]
+
+myrtscht B<--help>
+
+myrtscht B<-h>
+
+
+
+=head1 DESCRIPTION
+
+B<myrtscht> is a program which helps you managing table tennis
+tournaments with the round robin system.  But I think, you can also
+use it for other games.  It is completely text and command based, so
+there is neither a CLI nor a GUI, my apologies for this (if this needs
+to be apologised).  Therefore it works, as you can see in the
+synopsis, with running commands and editing text files.
+
+
+
+=head1 OPTIONS AND ARGUMENTS
+
+=over
+
+=item B<-n> [I<name>]
+
+Creates a new directory used for the tournament with the group files in
+it.  You can also give the directory a name, which has no effects on the
+group files, the default is "Tournament-<date>".
+
+=item B<-g> I<number>
+
+Defines the number of group files created when running with B<-n>, the
+default is 10.
+
+=item B<-p> I<files>
+
+Creates a group directory with the game files in it from each of the
+I<files> given and prints out some nice formatted tables on sheets of
+paper where you can write down the results of the games.
+
+=item B<-r> I<sets>
+
+Defines the number of sets to win for winning the whole game, the
+default is 2.  This is required when running with B<-p>.
+
+=item B<-s>
+
+Disables printing when running with B<-p>.
+
+=item B<-P> I<printer>
+
+Defines the I<printer> used when running with B<-p>, the default is the
+standard printer.
+
+=item B<-a> I<files>/I<directory>
+
+Computes a ranking file from the given group I<files> or I<directory>.
+
+=item B<-d> [I<file>]
+
+Switches to debugging mode.  The log is created by using the
+L<Log::Log4perl(3)|Log::Log4perl> module.  You can specify a config 
+I<file> to modify the output.
+
+=item B<-h> or B<--help>
+
+Print this help.
+
+=back
+
+
+
+=head1 FILES
+
+B<myrtscht> creates different files in its process of working.  They all
+have a special extension.  These may show up:
+
+=head2 The Tournament Directory
+
+The tournament directory is the directory all information for on
+tournament are stored in.  It is recommended to stay in this or
+subordinated directories when working with B<myrtscht>.
+
+
+=head2 Group Files F<*.g>
+
+These are the files you are going to see first when running a
+tournament.  Their format (before editing) is:
+
+    Name:
+    Tables:
+    Members:
+
+Z<>
+Behind "Name: " you have to write the name of the group.  Behind
+"Tables: " the names of the tables (numbers are recommended) the group
+plays at stand in a comma separated list. (Yes there are also other
+separators possible.  Look in the source code if you want them 
+implicitly!)  I<Under> "Members:" you have to write the names of the
+members of the group.
+
+=head3 Example:
+
+    Name: 50 before Christ
+    Tables: 1, 2, 3
+    Members:
+    Asterix
+    Obelix
+    Gaius Iulius Caesar
+    Gaius Bonus
+
+=head3 Note:
+
+Names with more than 20 letters are unbearable. (Maybe also the
+parents of the persons with this names.)
+
+
+=head2 The Group Directories F<*.d>
+
+Group directories are created when running B<myrtscht> with the option
+B<-p>.  They are named like the group files they are belonging to
+(apart from the extension).  All things belonging to one group should
+be done within the particular directory, so the group file is moved
+into the directory when running with B<-p>.
+
+
+=head2 Game Files F<*.s>
+
+These are the files being in a group directory after running with B<-p>.
+They look like this (before editing):
+
+    Asterix | Gaius Iulius Caesar
+
+There you can write down the results of a match.
+
+=head3 Example:
+
+    Asterix | Gaius Iulius Caesar
+    11  8
+    10  12
+    11  9
+
+=head3 Note:
+
+It is recommended to use just whitespace between the numbers.
+
+
+=head2 The Printout/F<gamesheets>
+
+When running B<myrtscht> with the option B<-p> it creates the file
+F<gamesheets>, sends it to the printer and then removes it.  If B<-s> is
+defined, there will be no printing and no removing.  With both versions
+parts of the printout will have this format (here just an example):
+ 
+    Group: 50 before Christ
+    Round: 2     Table: 3              ID: 013
+    ----------------------+---------------------
+           Asterix        | Gaius Iulius Caesar
+    ----------------------+---------------------
+                          |
+                          |
+                          |
+    ----------------------+---------------------
+
+Each of this parts represents one game.  Behind "Group: " is the name of
+the group situated.  "Round: " is the round they play in, "Table: " the
+name of the table they play at.  The "ID" is formed out of the names of
+the group directory (first two digits) and the game file (last one
+through three digits).  So you can easily identify the game file
+belonging to this game sheet.  Then the names of the opponents come and
+in the space below the referee can write down the result of the match.
+The width of this spaces varies with the number of rounds to play to win
+a match.
+
+
+=head2 The Ranking File F<ranking>
+
+Here the results of a group are written down.  You can see an example
+down below, but in order to work also with high scores it is a bit wide.
+
+    Rank Name                   Games       Sets        SD      Balls       BD   
+      1. Asterix                   3 :    0    6 :    1     5     76 :   53    23
+      2. Gaius Iulius Caesar       2 :    1    5 :    3     2     82 :   62    20
+      3. Obelix                    1 :    2    3 :    4    -1     59 :   57     2
+      4. Gaius Bonus               0 :    3    0 :    6    -6     21 :   66   -45
+
+"Rank" and "Name" are unambiguous.  "Games", "Sets" and "Balls"
+represent the played games, sets, respectively balls in the format
+"won : lost".  SD and BD represent the difference between won and lost
+sets, respectively balls.
+
+
+
+=head1 A BIG EXAMPLE or TUTORIAL (as you like it)
+
+Since all the stuff above is very theoretical, I will give a big
+example of the order of events in a tournament. You can see this part
+also as a tutorial wich makes getting used to B<myrtscht> easy.
+
+So let us start: Imagine, we are the organizers of a yearly table
+tennis tournament and we have heared from B<myrtscht>. Luckily we
+have a computer, we install the program and look forward to the
+event, since it will not become such tremendous arduous like the last
+years because of having B<myrtscht>. Unfortunately the person
+responsible for advertising has become ill and now there are just
+eleven persons to play. Wherever! Iulius Caesar is here and we do not
+want to disappoint him.
+
+But now let's begin working with our new tool!
+
+Firstly we init the tournament:
+
+    $ myrtscht -n Aremorican_Open-50BC -g 2
+    $ cd Aremorican_Open-50BC
+    $ ls
+    01.g  02.g
+
+There have four women and seven men registered at your table, so we
+make two groups out of them 
+
+
+=head1 NOTES
+
+If there are some mistakes in my grammar or spelling - please excuse.
+
+If anybody does not my like my way to document - please write me.
+
+
+
+=head1 BUGS
+
+When printing letters with umlaut in formats the layout gets a bit
+crazy, because the umlauts are counted like two but printed like one
+letter. - I think, this is a common problem, but haven't found a
+solution.  Maybe anyone reading this will give me a hint.
+
+When finding some other bugs write to my e-mail address.  There will
+also be a website and I want to upload this program to
+L<GNU Savannah|http://savannah.nongnu.org>.  So there is hope for a real
+bug tracker.
+
+
+
+=head1 SEE ALSO
+
+L<Games::Tournament::RoundRobin>, L<Log::Log4perl>
+
+There will also be a web site when I find time for it (maybe in summer).
+But the current version is always available from
+L<www.myrtscht.de|http://www.myrtscht.de>.
+
+
+
+=head1 AUTHOR
+
+Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 by Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+This program is free software.  You may copy or redistribute it under
+the same terms as Perl itself.
+
+=cut

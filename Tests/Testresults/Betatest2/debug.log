@@ -1,0 +1,34 @@
+2008/12/21 21:12:02: [43] Initialized. 
+2008/12/21 21:12:02: [47] Set option p to 1. 
+2008/12/21 21:12:02: [47] Set option d to . 
+2008/12/21 21:12:02: [56] Invoking subroutine to process the group files. 
+2008/12/21 21:12:02: [116] There will be 7 per page, so we have to insert 4 newlines after them. They are 9 lines high. 
+2008/12/21 21:12:02: [136] format GAMEPRINT = 
+Group: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$groupname
+Round: @<<<< Table: @<<<<          ID: @<<<<
+$roundcnt, $table, $id
+----------------------+---------------------
+@|||||||||||||||||||| |@||||||||||||||||||||
+$member1, $member2
+----------------------+---------------------
+                      |                     
+                      |                     
+                      |                     
+----------------------+---------------------
+.
+ 
+2008/12/21 21:12:02: [155] Now in group directory 01.d. 
+2008/12/21 21:12:02: [163] Group file content: Name: Auauauauau I Tables: 1, 2, 3 Members: Otottoto Ottoot Jklzuü Ärgos Irko Amli 
+2008/12/21 21:12:02: [165] The group is named Auauauauau I. 
+2008/12/21 21:12:02: [167] It plays at the tables 1 2 3. 
+2008/12/21 21:12:02: [170] It consists of Otottoto Ottoot Jklzuü Ärgos Irko Amli. 
+2008/12/21 21:12:02: [192] The schedule: 
+2008/12/21 21:12:02: [199] Round 1. 
+2008/12/21 21:12:02: [209] HASH(0x93fcb68) 
+2008/12/21 21:12:02: [199] Round 2. 
+2008/12/21 21:12:02: [209] HASH(0x93fcb68) HASH(0x94246e8) 
+2008/12/21 21:12:02: [199] Round 3. 
+2008/12/21 21:12:02: [209] HASH(0x93fcb68) HASH(0x94246e8) HASH(0x944c950) 
+2008/12/21 21:12:02: [253] Back in /home/moses/Betatest2. 
+2008/12/21 21:12:02: [255] Created the schedule. 

@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+use Games::Tournament::RoundRobin;
+
+my $schedule = Games::Tournament::RoundRobin->new(v => 6);
+#my $schedule = Games::Tournament::RoundRobin->new(league => [ qw/
+        Müller
+        Meier
+        Schulze
+        Lehmann
+        Eisler
+        Becher / ]);
+
+my $t = $schedule->roundsInTournament();
+my $i;
+
+for (@$t) {
+    print "Round $i\n";
+    $i++;
+    for (@$_) {
+        print "$_\n";
+    }
+}
