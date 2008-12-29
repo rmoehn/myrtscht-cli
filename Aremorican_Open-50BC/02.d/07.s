@@ -1,3 +1,3 @@
 Asterix | Gaius Bonus
-11  7
-11  5
+11  2
+11  2

@@ -1,4 +1,4 @@
 Asterix | Gaius Iulius Caesar
 11  8
-10  12
+14  16
 11  9

@@ -1,3 +1,3 @@
 Asterix | Obelix
 11  5
-11  7
+11  6

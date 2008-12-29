@@ -1,3 +1,3 @@
 Gaius Bonus | Gaius Iulius Caesar
-2   11
-3   11
+0   11
+0   11

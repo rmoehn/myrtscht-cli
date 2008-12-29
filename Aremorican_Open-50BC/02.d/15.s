@@ -1,4 +1,3 @@
 Obelix | Gaius Iulius Caesar
-9   11
-11  9
+4   11
 5   11

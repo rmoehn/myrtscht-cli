@@ -1,0 +1,198 @@
+2008/12/29 11:55:40: [42] Initialized. 
+2008/12/29 11:55:40: [46] Set option a to 1. 
+2008/12/29 11:55:40: [46] Set option d to . 
+2008/12/29 11:55:40: [58] Invoking subroutine to preprocess the game files. 
+2008/12/29 11:55:40: [273] We have a directory with game files given. 
+2008/12/29 11:55:40: [285] Giving game files 05.s gamesheets 02.s 03.s 06.s 01.s 04.s to the game file processor. 
+2008/12/29 11:55:40: [308] The players are Impedimenta and Bacteria. 
+2008/12/29 11:55:40: [313] Result: 11 : 7 
+2008/12/29 11:55:40: [313] Result: 5 : 11 
+2008/12/29 11:55:40: [313] Result: 9 : 11 
+2008/12/29 11:55:40: [313] Result:  :  
+2008/12/29 11:55:40: [313] Result: 1 : 1 
+2008/12/29 11:55:40: [313] Result:  :  
+2008/12/29 11:55:40: [308] The players are      Impedimenta      and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result: 1 : 1 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [308] The players are       Bacteria        and       Bravura. 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [313] Result: 2 : 1 
+2008/12/29 11:55:40: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:55:40: [308] The players are      Impedimenta      and       Bravura. 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [313] Result: 2 : 1 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:55:40: [308] The players are       Bacteria        and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result: 3 : 1 
+2008/12/29 11:55:40: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [308] The players are      Impedimenta      and      Bacteria. 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [313] Result: 3 : 1 
+2008/12/29 11:55:40: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:55:40: [308] The players are        Bravura        and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:55:40: [308] The players are Bacteria and Bravura. 
+2008/12/29 11:55:40: [313] Result: 11 : 8 
+2008/12/29 11:55:40: [313] Result: 10 : 12 
+2008/12/29 11:55:40: [313] Result: 11 : 9 
+2008/12/29 11:55:40: [308] The players are Impedimenta and Bravura. 
+2008/12/29 11:55:40: [313] Result: 11 : 4 
+2008/12/29 11:55:40: [313] Result: 11 : 3 
+2008/12/29 11:55:40: [308] The players are Bravura and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result: 3 : 11 
+2008/12/29 11:55:40: [313] Result: 8 : 11 
+2008/12/29 11:55:40: [308] The players are Impedimenta and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result: 11 : 4 
+2008/12/29 11:55:40: [313] Result: 11 : 8 
+2008/12/29 11:55:40: [308] The players are Bacteria and Mrs Fulliautomatix. 
+2008/12/29 11:55:40: [313] Result: 14 : 16 
+2008/12/29 11:55:40: [313] Result: 12 : 10 
+2008/12/29 11:55:40: [313] Result: 18 : 20 
+2008/12/29 11:55:40: [366] Processed the game files. 
+2008/12/29 11:55:40: [375] Sorted all the stuff. 
+2008/12/29 11:55:40: [398] Generated the ranking file. 
+2008/12/29 11:57:26: [42] Initialized. 
+2008/12/29 11:57:26: [46] Set option a to 1. 
+2008/12/29 11:57:26: [46] Set option d to . 
+2008/12/29 11:57:26: [58] Invoking subroutine to preprocess the game files. 
+2008/12/29 11:57:26: [273] We have a directory with game files given. 
+2008/12/29 11:57:26: [285] Giving game files 05.s gamesheets 02.s 03.s 06.s 01.s 04.s to the game file processor. 
+2008/12/29 11:57:26: [308] The players are Impedimenta and Bacteria. 
+2008/12/29 11:57:26: [313] Result: 11 : 7 
+2008/12/29 11:57:26: [313] Result: 5 : 11 
+2008/12/29 11:57:26: [313] Result: 9 : 11 
+2008/12/29 11:57:26: [313] Result:  :  
+2008/12/29 11:57:26: [313] Result: 1 : 1 
+2008/12/29 11:57:26: [313] Result:  :  
+2008/12/29 11:57:26: [308] The players are      Impedimenta      and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result: 1 : 1 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [308] The players are       Bacteria        and       Bravura. 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [313] Result: 2 : 1 
+2008/12/29 11:57:26: [313] Result:       Bacteria        :       Bravura 
+2008/12/29 11:57:26: [308] The players are      Impedimenta      and       Bravura. 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [313] Result: 2 : 1 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :       Bravura 
+2008/12/29 11:57:26: [308] The players are       Bacteria        and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result: 3 : 1 
+2008/12/29 11:57:26: [313] Result:       Bacteria        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [308] The players are      Impedimenta      and      Bacteria. 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [313] Result: 3 : 1 
+2008/12/29 11:57:26: [313] Result:      Impedimenta      :      Bacteria 
+2008/12/29 11:57:26: [308] The players are        Bravura        and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [313] Result:        Bravura        : Mrs Fulliautomatix 
+2008/12/29 11:57:26: [308] The players are Bacteria and Bravura. 
+2008/12/29 11:57:26: [313] Result: 11 : 8 
+2008/12/29 11:57:26: [313] Result: 10 : 12 
+2008/12/29 11:57:26: [313] Result: 11 : 9 
+2008/12/29 11:57:26: [308] The players are Impedimenta and Bravura. 
+2008/12/29 11:57:26: [313] Result: 11 : 4 
+2008/12/29 11:57:26: [313] Result: 11 : 3 
+2008/12/29 11:57:26: [308] The players are Bravura and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result: 3 : 11 
+2008/12/29 11:57:26: [313] Result: 8 : 11 
+2008/12/29 11:57:26: [308] The players are Impedimenta and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result: 11 : 4 
+2008/12/29 11:57:26: [313] Result: 11 : 8 
+2008/12/29 11:57:26: [308] The players are Bacteria and Mrs Fulliautomatix. 
+2008/12/29 11:57:26: [313] Result: 14 : 16 
+2008/12/29 11:57:26: [313] Result: 12 : 10 
+2008/12/29 11:57:26: [313] Result: 18 : 20 
+2008/12/29 11:57:26: [366] Processed the game files. 
+2008/12/29 11:57:26: [375] Sorted all the stuff. 
+2008/12/29 11:57:26: [398] Generated the ranking file. 
+2008/12/29 11:59:43: [42] Initialized. 
+2008/12/29 11:59:43: [46] Set option a to 1. 
+2008/12/29 11:59:43: [46] Set option d to . 
+2008/12/29 11:59:43: [58] Invoking subroutine to preprocess the game files. 
+2008/12/29 11:59:43: [273] We have a directory with game files given. 
+2008/12/29 11:59:43: [285] Giving game files 05.s 02.s 03.s 06.s 01.s 04.s to the game file processor. 
+2008/12/29 11:59:43: [308] The players are Impedimenta and Bacteria. 
+2008/12/29 11:59:43: [313] Result: 11 : 7 
+2008/12/29 11:59:43: [313] Result: 5 : 11 
+2008/12/29 11:59:43: [313] Result: 9 : 11 
+2008/12/29 11:59:43: [308] The players are Bacteria and Bravura. 
+2008/12/29 11:59:43: [313] Result: 11 : 8 
+2008/12/29 11:59:43: [313] Result: 10 : 12 
+2008/12/29 11:59:43: [313] Result: 11 : 9 
+2008/12/29 11:59:43: [308] The players are Impedimenta and Bravura. 
+2008/12/29 11:59:43: [313] Result: 11 : 4 
+2008/12/29 11:59:43: [313] Result: 11 : 3 
+2008/12/29 11:59:43: [308] The players are Bravura and Mrs Fulliautomatix. 
+2008/12/29 11:59:43: [313] Result: 3 : 11 
+2008/12/29 11:59:43: [313] Result: 8 : 11 
+2008/12/29 11:59:43: [308] The players are Impedimenta and Mrs Fulliautomatix. 
+2008/12/29 11:59:43: [313] Result: 11 : 4 
+2008/12/29 11:59:43: [313] Result: 11 : 8 
+2008/12/29 11:59:43: [308] The players are Bacteria and Mrs Fulliautomatix. 
+2008/12/29 11:59:43: [313] Result: 14 : 16 
+2008/12/29 11:59:43: [313] Result: 12 : 10 
+2008/12/29 11:59:43: [313] Result: 18 : 20 
+2008/12/29 11:59:43: [366] Processed the game files. 
+2008/12/29 11:59:43: [375] Sorted all the stuff. 
+2008/12/29 11:59:43: [398] Generated the ranking file. 
