@@ -2,7 +2,7 @@
 
 # all the nice modules
 use strict;
-#use warnings;
+use warnings;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
 use File::Spec;
@@ -232,7 +232,7 @@ sub process_group_files {
         for my $round (@schedule) {
             $roundcnt++;
             for my $member (keys %{ $round }) {
-                $id      = $groupfnr . ++$gamecnt;
+                $id      = $groupfnr . sprintf("%02d", ++$gamecnt);
                 $table   = shift @tables;
                 $member1 = $member;
                 $member2 = $round->{$member};
@@ -450,13 +450,13 @@ in the synopsis, with running commands and editing text files.
 
 =item B<-n> [I<name>]
 
-Creates a new directory used for the tournament with the group files in
-it.  You can also give the directory a name, which has no effects on the
-group files, the default is "Tournament-<date>".
+Creates a new directory used for the tournament with the group files
+in it.  You can also give the directory a I<name>, which has no
+effects on the group files, the default is "Tournament-<date>".
 
 =item B<-g> I<number>
 
-Defines the number of group files created when running with B<-n>, the
+Defines the I<number> of group files created when running with B<-n>, the
 default is 10.
 
 =item B<-p> I<files>
@@ -467,7 +467,7 @@ paper where you can write down the results of the games.
 
 =item B<-r> I<sets>
 
-Defines the number of sets to win for winning the whole game, the
+Defines the number of I<sets> to win for winning the whole game, the
 default is 2.  This is required when running with B<-p>.
 
 =item B<-s>
@@ -500,7 +500,7 @@ Print this help.
 =head1 FILES
 
 B<myrtscht> creates different files in its process of working.  They all
-have a special extension.  These may show up:
+have either a special extension or a special name.  These may show up:
 
 =head2 The Tournament Directory
 
@@ -576,8 +576,8 @@ It is recommended to use just whitespace between the numbers.
 
 When running B<myrtscht> with the option B<-p> it creates the file
 F<gamesheets>, sends it to the printer and then removes it.  If B<-s> is
-defined, there will be no printing and no removing.  With both versions
-parts of the printout will have this format (here just an example):
+defined, there will be no printing and no removing.  In both cases
+the parts of the printout will have this format (here just an example):
  
     Group: 50 before Christ
     Round: 2     Table: 3              ID: 013
@@ -592,11 +592,11 @@ parts of the printout will have this format (here just an example):
 Each of this parts represents one game.  Behind "Group: " is the name of
 the group situated.  "Round: " is the round they play in, "Table: " the
 name of the table they play at.  The "ID" is formed out of the names of
-the group directory (first two digits) and the game file (last one
-through three digits).  So you can easily identify the game file
+the group directory (first two digits) and the game file (last two
+or three digits).  So you can easily identify the game file
 belonging to this game sheet.  Then the names of the opponents come and
 in the space below the referee can write down the result of the match.
-The width of this spaces varies with the number of rounds to play to win
+The height of this space varies with the number of rounds to play to win
 a match.
 
 
@@ -644,7 +644,7 @@ Firstly we init the tournament:
 
 There have four women and seven men registered at your table, so we
 make two groups out of them. (See! We were such foresighted, that we
-have just created two group files.)
+have created just two group files.)
 
     $ vim 01.g          # of course we use vim(1)
     $ cat 01.g
@@ -666,9 +666,9 @@ have just created two group files.)
     Edifis
     Dogmatix
 
-We have already set up our printer, so we can start immediately. The
-only thing is that it is not the standard. So we have to define it
-explicitely:
+We have already set up our printer, so we can start creating the group
+directories immediately. The only thing is that it is not the
+standard. So we have to define it explicitely:
 
     $ myrtscht -p *.g -P GS-Printfix-50BC
     $ ls
@@ -719,6 +719,13 @@ vim(1) and with tabs:
     $ vim -p 02.d/*.s
     # I leave the "cat" out here. It needs too much space.
 
+=head3 Note:
+
+Thanks to the ID on the game sheets it is very easy to discover the 
+related game file. The first two digits are synonymous with the number of
+the group directory, the last two to three with the number of the game 
+file.
+
 As soon as we have done this, we are very anxious to know the results:
 
     $ myrtscht -a 01.d
@@ -763,7 +770,12 @@ senseful.
 
 =item -
 
-If there are some mistakes in my grammar or spelling - please excuse.
+It is required to have a printout with 67 lines per page.
+
+=item -
+
+If there are some mistakes in my grammar or spelling - please excuse and
+write me!
 
 =item -
 
@@ -771,8 +783,8 @@ If anybody does not my like my way to document - please write me.
 
 =item -
 
-My name is written with "o umlaut", but perldoc doesn't like the correct
-spelling. If you want to see the correct spelling use
+My name is written with "o umlaut", but perldoc(1) doesn't like the
+correct spelling. If you want to see the correct spelling use
 S<C<pod2man --utf8 myrtscht | nroff -Tlatin1 -man | less>> instead of
 running with B<-h> or B<--help>!
 

@@ -1,0 +1,866 @@
+#!/usr/bin/perl
+
+# all the nice modules
+use strict;
+use warnings;
+use Log::Log4perl qw/ :easy /;
+use Cwd;
+use File::Spec;
+use Getopt::Long qw/ :config no_ignore_case bundling /;
+use Games::Tournament::RoundRobin;
+use Net::CUPS;
+use Net::CUPS::Destination;
+use Pod::Usage;
+
+# set up all the nice options
+pod2usage( {
+        -exitval => 2,
+        -verbose => 2,
+           } ) unless @ARGV;  # no options are no good
+my %Options;
+GetOptions(
+        's'      => \$Options{s},
+        'a'      => \$Options{a},
+        'p'      => \$Options{p},
+        'h|help' => \$Options{h},
+        'r:s'    => \$Options{r},
+        'g:s'    => \$Options{g},
+        'n:s'    => \$Options{n},
+        'd:s'    => \$Options{d},
+        'P:s'    => \$Options{P},
+) or pod2usage( {
+        -exitval => 2,
+        -verbose => 2,
+                } );
+
+# set up some general variables
+my $Etcpath = File::Spec->catfile(
+        File::Spec->rootdir(),
+        qw/ home moses Perl Myrtscht etc /);
+
+# initialize the logger or not
+if (defined $Options{d}) {
+    my $cwd = getcwd()
+        or die "Konnte das gegenwärtige Arbeitsverzeichnis nicht "
+             . "ermitteln: $!\n";
+    my $logfile =
+        $Options{d} ?
+        File::Spec->catfile($cwd, $Options{d}) :
+        File::Spec->catfile($Etcpath, 'log.conf');
+    Log::Log4perl->init($logfile);
+}
+INFO "Initialisiert.";
+
+# little debbugging help
+foreach my $option (keys %Options) {
+    DEBUG "Option $option auf den Wert $Options{$option} gesetzt."
+        if defined $Options{$option};
+}
+
+# invoke the subroutines corresponding to the options
+# Okay, it seems a bit obvious to repeat the arguments, but who knows if
+# I wand to add something later?
+if (defined $Options{n}) {
+    INFO "Aufrufen der Subroutine zum Erstellen eines neuen Turniers.";
+    &create_new_tournament(\$Etcpath, \%Options, \@ARGV);
+} elsif (defined $Options{p}) {
+    INFO "Aufrufen der Subroutine zum Verarbeiten der Gruppendateien.";
+    &process_group_files(\$Etcpath, \%Options, \@ARGV);
+} elsif (defined $Options{a}) {
+    INFO "Aufrufen der Subroutine zum Vorbereiten der Spieldateien.";
+    &preprocess_game_files(\$Etcpath, \%Options, \@ARGV);
+} elsif (defined $Options{h}) {
+    pod2usage( { -exitval => 1,
+                 -verbose => 2,
+                 -output  => \*STDOUT,
+               } );
+}
+
+# the subroutine invoked if the option -n is defined
+sub create_new_tournament {
+    my $etcpath               = shift;
+    my $options               = shift;
+    my $specified_groupfnames = shift;
+
+    # creating the directory in which the tournament is stored
+    {
+    my @date           = (localtime)[4,3,5];
+    my $tournam_dir = 
+        $options->{n} || sprintf(
+                "Turnier-%02d%02d%d",
+                $date[0] + 1,
+                $date[1],
+                $date[2] + 1900);
+    mkdir($tournam_dir, 0755)
+        or die "Konnte Verzeichnis $tournam_dir nicht erstellen: $!\n";
+    DEBUG "Neues Turnierverzeichnis $tournam_dir erstellt.";
+    chdir $tournam_dir
+        or die "Konnte nicht in Verzeichnis $tournam_dir wechseln: $!\n";
+    DEBUG "In das Verzeichnis $tournam_dir gewechselt.";
+    }
+   
+    # write the group template into all the group files
+    my $groupnr = $options->{g} || 10;
+    my @groupfiles;
+    for (my $i = 1; $i <= $groupnr; $i++) {
+        my $groupfname = sprintf("%02d.g", $i);
+        open(GROUPFILE, ">", $groupfname)
+            or die "Konnte $groupfname nicht öffnen: $!\n";
+        print GROUPFILE <<"EOF";
+Name:
+Tische:
+Mitglieder:
+
+EOF
+    
+    DEBUG "Vorlage in Datei $groupfname geschrieben.";
+    }
+    INFO "Gruppendateien erstellt.";
+}
+
+# the subroutine invoked if the option -p is defined
+sub process_group_files {
+    my $etcpath    = shift;
+    my $options    = shift;
+    my $groupfiles = shift;
+    my $cwd        = getcwd;
+
+    # We have to compute some things therewith the printout looks
+    # nice later.
+    # The number of lines per sheet of A4 paper must be 67 and 67
+    # must be the number of lines per sheet of A4 paper as thou have
+    # to use A4 paper with a number of 13 chars per column to get 
+    # nice results.
+    my $maxsetnr        = ($options->{r} || 2) * 2 - 1;
+    my $gamesheetheigth = $maxsetnr + 6;
+    my $gamesheets      = sprintf("%d", 67 / $gamesheetheigth);
+    my $newlines        = 67 - $gamesheets * $gamesheetheigth;
+    DEBUG "Es sind $gamesheets Spielzettel pro Seite, also müssen wir "
+        . "$newlines Zeilenumbrüche nach ihnen einfügen. Sie sind "
+        . "$gamesheetheigth lines high.";
+
+    # the format for the printout; Alas, I can't declare the
+    # variables in a smaller scope.
+    my($groupname, $member1, $id, $table, $member2, $roundcnt);
+    my $printoutform = 
+          "format GAMEPRINT = \n"
+        . 'Gruppe: @' . '<' x 35 . "\n"
+        . '$groupname' . "\n"
+        . 'Runde: @<<<< Tisch: @<<<<' . ' ' x 10 . 'ID: @<<<<' . "\n"
+        . '$roundcnt, $table, $id' . "\n"
+        . '-' x 22 . '+' . '-' x 21 . "\n"
+        . '@' . '|' x 20 . ' |' . '@' . '|' x 20 . "\n"
+        . '$member1, $member2' . "\n"
+        . '-'  x 22 . '+' . '-' x 21 . "\n"
+        . (' ' x 22 . '|' . ' ' x 21 . "\n") x $maxsetnr
+        . '-'  x 22 . '+' . '-' x 21 . "\n"
+        . ".\n";
+    DEBUG $printoutform if defined $options->{d};
+    eval $printoutform;
+    die $@ if $@;
+
+    # process the group files one by one
+    foreach my $groupfile (@$groupfiles) {
+        my $printfile = "Spielzettel";
+        my $groupfnr = substr($groupfile, 0, 2);
+        my $printer;
+
+        # manage the group directory
+        {
+        my $groupdir = $groupfnr . ".d";
+        mkdir($groupdir, 0755)
+            or die "Konnte Verzeichnis $groupdir nicht anlegen: $!\n";
+        rename($groupfile, File::Spec->catfile($groupdir, $groupfile))
+            or die "Konnte $groupfile nicht nach $groupdir "
+                 . "verschieben: $!\n";
+        chdir $groupdir
+            or die "Konnte nicht nach $groupdir wechseln: $!";
+        DEBUG "Nun in Gruppenverzeichnis $groupdir.";
+        }
+
+        # read the groupfile
+        open(GROUPFILE, "<", $groupfile)
+            or die "Konnte Gruppendatei $groupfile nicht öffnen: $!\n";
+        chomp(my @gf_content = <GROUPFILE>);
+        close GROUPFILE;
+        DEBUG "Gruppendateiinhalt: @gf_content";
+        $groupname  = substr(shift @gf_content, 6);
+        DEBUG "Die Gruppe heißt $groupname.";
+        my @tables  = split(m([ ,;.:/]+), substr(shift @gf_content, 8));
+        DEBUG "Sie spielt an den Tischen @tables.";
+        shift @gf_content;
+        my @members = @gf_content;
+        DEBUG "Sie besteht aus @members.";
+        undef @gf_content;
+
+        # initialize the printing things
+        # invoke the spooler or not
+        unless (defined $options->{s}) {
+            my $cups = Net::CUPS->new()
+                or warn "Konnte kein CUPS bekommen - wir "
+                      . "werden nicht drucken können.\n";
+            $printer = $cups->getDestination($options->{P})
+                or warn "Konnte das Ziel des Druckers nicht "
+                      . "herausfinden. Bitte nimm einen anderen!\n";
+            $printer->addOption("cpi", 13);
+            $printer->addOption("columns", 2);
+        } 
+        open(GAMEPRINT, ">>", $printfile)
+            or die "Konnte $printfile nicht öffnen: $!\n";
+        select((select(GAMEPRINT), $|++)[0]);
+
+        # create the schedule for the group
+        my @schedule;
+        {
+        DEBUG "Der Spielplan:";
+        my $group = Games::Tournament::RoundRobin->new(
+                league => \@members
+                );
+        for (my $i = 1; $i <= $group->rounds(); $i++) {
+            my %round;
+            my %raw_schedule = %{ $group->membersInRound($i) };
+            DEBUG "Runde $i.";
+            my %parsed_values;
+            foreach my $member (keys %raw_schedule) {
+                next if $member eq "Bye";
+                next if $raw_schedule{$member} eq "Bye";
+                next if $parsed_values{$member};
+                $round{$member} = $raw_schedule{$member};
+                $parsed_values{$round{$member}} = 1;
+            }
+            push(@schedule, \%round);
+            DEBUG "@schedule";
+        }
+        }
+
+        # process the schedule and create the necessary files
+        {
+        my($gamecnt, $appendcnt);
+
+        for my $round (@schedule) {
+            $roundcnt++;
+            for my $member (keys %{ $round }) {
+                $id      = $groupfnr . sprintf("%02d", ++$gamecnt);
+                $table   = shift @tables;
+                $member1 = $member;
+                $member2 = $round->{$member};
+                my $gamefile = sprintf("%02d.s", $gamecnt);
+                push(@tables, $table);
+
+                # create the gamefile
+                open(GAMEFILE, ">", $gamefile)
+                    or die "Konnte $gamefile nicht öffnen: $!\n";
+                print GAMEFILE "$member | $round->{$member}\n";
+
+                # append to the print file
+                write GAMEPRINT;
+                $appendcnt++;
+                if ($appendcnt == $gamesheets) {
+                    print GAMEPRINT "\n" x $newlines;
+                    $appendcnt = 0;
+                }
+            }
+        }
+        }
+
+        # print out or do something else
+        unless (defined $options->{s}) {
+            $printer->printFile($printfile, $printfile)
+                or die "Konnte nicht drucken: $!\n";
+            unlink $printfile
+                or warn "Konnte $printfile nicht löschen: $!\n";
+        }
+
+        chdir $cwd
+            or die "Konnte nicht nach $cwd wechseln: $!\n";
+        DEBUG "Wieder in $cwd.";
+    }
+    INFO "Spielplan erstellt.";
+}
+
+# the subroutine invoked if the option -a is defined
+# But it just preprocesses and gives the the files directly to the
+# true processing subroutine.
+sub preprocess_game_files {
+    my $etcpath         = shift;
+    my $options         = shift;
+    my $file_containing = shift;
+
+    # process the input and filtering out just the game files to
+    # give to the following routine
+    if (-d $file_containing->[0]) {
+        DEBUG "Ah, ein Verzeichnis mit Spieldateien.";
+        my $dirname = $file_containing->[0];
+        opendir(GROUPDIR, $file_containing->[0])
+            or die "Konnte $file_containing->[0] nicht öffnen: $!\n";
+        @$file_containing = readdir GROUPDIR;
+        closedir GROUPDIR;
+        chdir $dirname
+            or die "Konnte nicht nach $dirname wechseln: $!\n";
+    } else {
+        DEBUG "Ah, eine Liste mit Dateinamen.";
+    }
+    my @gamefiles = grep { /\.s$/ } @$file_containing;
+    DEBUG "Gebe @gamefiles dem Spieldateiverarbeiter.";
+    &process_game_files($etcpath, $options, \@gamefiles);
+}
+
+# process the game files
+sub process_game_files {
+    my $etcpath   = shift;
+    my $options   = shift;
+    my $gamefiles = shift;
+    my %players;
+
+    # process the game file and create the data structure
+    for my $gamefile (@$gamefiles) {
+        open(GAMEFILE, $gamefile)
+            or die "Konnte $gamefile nicht öffnen: $!\n";
+        my($name1, $name2);
+        my $numcont;
+
+        while (<GAMEFILE>) {
+            chomp;
+            next if /#/;
+            if (/(.+) \| (.+)/) {
+                ($name1, $name2) = ($1, $2);
+                 DEBUG "Die Spieler sind $name1 und $name2.";
+                 $numcont = 0;
+            } else {
+                ($players{$name1}{balls}, $players{$name2}{balls})
+                    = /(\d+)\D+(\d+)/;
+                DEBUG "Ergebnis: $1 : $2";
+                $numcont = 1;
+            }
+
+            $players{$name1}{all_fails} += $players{$name2}{balls},
+            $players{$name2}{all_fails} += $players{$name1}{balls},
+            $players{$name1}{all_balls} += $players{$name1}{balls},
+            $players{$name2}{all_balls} += $players{$name2}{balls},
+            $players{$name1}{ball_difference} +=
+              ($players{$name1}{balls} - $players{$name2}{balls}),
+            $players{$name2}{ball_difference} +=
+              ($players{$name2}{balls} - $players{$name1}{balls}),
+                if $numcont;
+
+            if ($numcont and
+                    $players{$name1}{balls} > $players{$name2}{balls}) {
+                $players{$name1}{sets_won}++;
+                $players{$name1}{all_sets_won}++;
+                $players{$name2}{sets_lost}++;
+                $players{$name2}{all_sets_lost}++;
+            } elsif ($numcont) {
+                $players{$name2}{sets_won}++;
+                $players{$name2}{all_sets_won}++;
+                $players{$name1}{sets_lost}++;
+                $players{$name1}{all_sets_lost}++;
+            }
+            $players{$name1}{balls} = 0; # Just for this game
+            $players{$name2}{balls} = 0; #
+        }
+
+            if ($players{$name1}{sets_won}
+                    > $players{$name2}{sets_won}) {
+                $players{$name1}{wins}++;
+                $players{$name2}{losts}++;
+            } else {
+                $players{$name2}{wins}++;
+                $players{$name1}{losts}++;
+            }
+
+            $players{$name1}{set_difference} +=
+              ($players{$name1}{sets_won} - $players{$name2}{sets_won});
+            $players{$name2}{set_difference} +=
+              ($players{$name2}{sets_won} - $players{$name1}{sets_won});
+
+            $players{$name1}{sets_won} = 0; # Just for this game.
+            $players{$name2}{sets_won} = 0; #
+    }
+    # I know, this whole thing is very very ugly. But how ugly
+    # would it be  if there were no hashes? On top of that it
+    # produces occasional warnings. But I think, if it
+    # wouldn't produce occasional warnings, it would also be
+    # far more ugly.
+    close GAMEFILE;
+    INFO "Spieldateien verarbeitet.";
+
+    # sort the people according to their games
+    my @ranking = sort {
+        $players{$b}{wins}           <=> $players{$a}{wins}           or
+        $players{$a}{losts}          <=> $players{$b}{losts}          or
+        $players{$b}{set_difference} <=> $players{$a}{set_difference} or
+        $players{$b}{ball_difference} <=> $players{$a}{ball_difference}
+    } keys %players;
+    DEBUG "Alles sortiert.";
+    
+    # generate the ranking file
+    open(RANKING, ">", "Platzierungen")
+        or die "Konnte \"Platzierungen\" nicht öffnen: $!\n";
+    printf RANKING ("%5s %-21s\t%-11s\t%-11s\t%-5s\t%-11s\t%-5s\n",
+            "Platz", "Name", "Spiele", "Sätze", "SD", "Bälle", "BD");
+    my $rank;
+    foreach my $player (@ranking) {
+        printf RANKING (
+                    "%4d. %-21s\t%4d : %4d\t%4s : %4s\t%5s\t"
+                  . "%4s : %4s\t%5s\n",
+                    ++$rank, $player,
+                    $players{$player}{wins}            || 0,
+                    $players{$player}{losts}           || 0,
+                    $players{$player}{all_sets_won}    || 0,
+                    $players{$player}{all_sets_lost}   || 0,
+                    $players{$player}{set_difference}  || 0,
+                    $players{$player}{all_balls}       || 0,
+                    $players{$player}{all_fails}       || 0,
+                    $players{$player}{ball_difference} || 0,
+                    );
+    }
+    INFO "Platzierungsdatei erstellt.";
+}
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+myrtscht 0.1 - My Round robin Tournament SCHeduling for Table tennis
+
+
+
+=head1 ÜBERSICHT
+
+myrtscht B<-n> [I<Turniername>] [B<-g> I<Gruppenzahl>] [B<-d> [I<Datei>]]
+
+myrtscht B<-p> I<Dateien> [B<-r> I<Gewinnsätze>] [B<-s>]
+[B<-P> I<Drucker>] [B<-d> [I<Datei>]]
+
+myrtscht B<-a> I<Spieldateien>/I<Gruppenverzeichnis> [B<-d> [I<Datei>]]
+
+myrtscht B<--help>
+
+myrtscht B<-h>
+
+
+
+=head1 BESCHREIBUNG
+
+B<myrtscht> dient der Verwaltung von Tischtennisturnieren im 
+Gruppensystem. Aber es sollte auch möglich sein, es für anderen Spiele zu
+verwenden. B<myrtscht> ist vollständig text- und kommandobasiert, sodass
+weder eine spezielle Kommandozeile noch eine graphische
+Benutzeroberfläche existieren, ich bitte um Entschuldigung (, falls
+das entschuldigt werden muss). Wie Sie in der Übersicht sehen können,
+bedient man es also, in dem man Befehle gibt und Textdateien
+bearbeitet.
+
+
+=head1 OPTIONEN UND ARGUMENTE
+
+=over
+
+=item B<-n> [I<Turniername>]
+
+Erstellt ein neues, für das Turnier genutztes Verzeichnis mit den
+Gruppendateien darin. Sie können auch einen Namen für das Verzeichnis
+angeben, was keine Auswirkung auf die Gruppendateien hat.
+Normalerweise ist der Name "Turnier-<Datum>".
+
+=item B<-g> I<Gruppenzahl>
+
+Definiert die Anzahl der bei der Ausführung mit B<-n> erstellten Gruppen.
+Die Vorgabe ist 10.
+
+=item B<-p> I<Gruppendateien>
+
+Erstellt von jeder gegebenen I<Gruppendatei> ein Gruppenverzeichnis, das
+Spieldateien enthält, und druckt Spielzettel, auf die man die
+Ergebnisse schreiben kann, in Form von Tabellen aus.
+
+=item B<-r> I<Gewinnsätze>
+
+Definiert die Anzahl der I<Gewinnsätze>, wenn B<myrtscht> im
+B<-p>-Modus ausgeführt wird. Die Vorgabe ist 2.
+
+=item B<-s>
+
+Verhindert das Drucken, bei der Ausführung mit B<-p>.
+
+=item B<-P> I<Drucker>
+
+Definiert den I<Drucker>, der bei der Ausführung mit B<-p> verwendet
+wird. Die Vorgabe ist der Standarddrucker.
+
+=item B<-a> I<Spieldateien>/I<Gruppenverzeichnis>
+
+Berechnet die Platzierungen anhand der gegebenen I<Spieldateien> oder
+des gegebenen I<Gruppenverzeichnisses>.
+
+=item B<-d> [I<Konfigurationsdatei>]
+
+Schaltet in den Debug-Modus. Das Protokoll wird unter der Verwendung
+des L<Log::Log4perl(3)|Log::Log4perl> Moduls. Es kann eine
+I<Konfigurationsdatei> angegeben werden, die das Verhalten der
+Log-Funktionen bestimmt.
+
+=item B<-h> or B<--help>
+
+Gibt diese Hilfe aus.
+
+=back
+
+
+
+=head1 DATEIEN
+
+B<myrtscht> legt im Verlauf seiner Arbeit verschiedene Dateien an, die
+entweder eine bestimmte Endung oder einen bestimmten Namen tragen.
+
+=head2 Das Turnierverzeichnis
+
+Das Turnierverzeichnis ist das Verzeichnis, in dem alle Informationen
+für ein Turnier gespeichert werden. Es wird empfohlen, in diesem oder
+in untergeordneten Verzeichnissen zu verweilen, wenn man mit
+B<myrtscht> arbeitet.
+
+
+=head2 Gruppendateien F<*.g>
+
+Dies sind die Dateien, die man als erstes zu Gesicht bekommt, wenn man
+ein Turnier veranstaltet. Ihr Format (vor dem Bearbeiten) ist:
+
+    Name:
+    Tische:
+    Mitglieder:
+    
+Z<>
+Hinter "Name: " muss der Name der Gruppe stehen. Hinter stehen
+"Tische: " die Namen der Tische (Zahlen werden empfohlen), an denen
+die Gruppe spielt, in Form einer mit Kommas getrennten Liste. (Ja, es
+sind auch anderer Trenner möglich. Schauen Sie in den Quellcode, wenn
+Sie etwas gegen Kommas haben!) I<Unter> "Mitglieder:" sollten die
+Namen der Gruppenmitglieder stehen.
+
+=head3 Beispiel:
+
+    Name: 50 vor Christus
+    Tables: 1, 2, 3
+    Members:
+    Asterix
+    Obelix
+    Gaius Iulius Caesar
+    Gaius Bonus
+
+=head3 Bemerkung:
+
+Namen mit mehr als 20 Buchstaben sind unerträglich. (Vielleicht auch
+die Eltern der Personen mit solchen Namen.)
+
+
+=head2 Die Gruppenverzeichnisse F<*.d>
+
+Gruppenverzeichnisse werden erstellt, wenn man B<myrtscht> mit der
+Option B<-p> ausführt. Abgesehen von der Dateiendung tragen sie den
+Namen der Gruppendatei, zu der sie gehören. Alle Dinge, die mit einer
+Gruppe zu tun haben, sollten im jeweiligen Verzeichnis erledigt
+werden, deshalb wird auch die Gruppendatei in das Gruppenverzeichnis
+verschoben, wenn man B<myrtscht> im B<-p>-Modus ausführt.
+
+
+=head2 Spieldateien F<*.s>
+
+Die sind die Dateien, die sich in den Gruppenverzeichnissen nach der
+Ausfürung mit B<-p> befinden. Sie sehen so aus (vor der Bearbeitung):
+
+    Asterix | Gaius Iulius Caesar
+
+Hier werden die Ergebnisse der Spiele niedergeschrieben.
+
+=head3 Beispiel:
+
+    Asterix | Gaius Iulius Caesar
+    11  8
+    10  12
+    11  9
+
+=head3 Bemerkung:
+
+Es wird empfohlen, nur Leerraum (keine Kommas oder ähnliches) zwischen
+den Zahlen zu lassen.
+
+
+=head2 Der Ausdruck/F<Spielzettel>
+
+Wenn man B<myrtscht> mit der Option B<-p> ausführt, erstellt es die Datei
+F<Spielzettel>, sendet es an den Drucker und löscht es wieder. Wenn
+B<-s> eingeschaltet ist, ist das Drucke und Löschen ausgeschaltet. In
+beiden Fällen haben die Teile des Ausdrucks dieses Format:
+
+    Gruppe: 50 vor Christus
+    Runde: 2     Tisch: 3              ID: 013
+    ----------------------+---------------------
+           Asterix        | Gaius Iulius Caesar
+    ----------------------+---------------------
+                          |
+                          |
+                          |
+    ----------------------+---------------------
+
+Jeder dieser Teile repräsentiert ein Spiel. Hinter "Gruppe: " steht
+der Name der Gruppe. "Runde: " ist die Runde, in der, "Tisch: " ist
+der Tisch, an dem das Spiel stattfindet. Die "ID" wird aus den Namen
+des Gruppenverzeichnisses (die ersten zwei Ziffern) und der Spieldatei
+(die letzten zwei oder drei Ziffern) gebildet. So kann man leicht die
+Spieldatei, die zu dem jeweiligen Spielzettel gehört, herausfinden.
+Dann kommen die Namen der Gegner und in den Platz darunter kann der
+Schiedsrichter die Ergebnisse eines Spiels schreiben. Die Höhe dieses
+Platzes variiert mit der Anzahl der Gewinnsätze.
+
+
+=head2 Die Platzierungsdatei F<Platzierungen>
+
+Hier stehen die Ergebnisse einer Gruppe geschrieben. Unten sieht man
+ein Beispiel, aber um auch mit hohen Ergebnissen arbeiten zu können,
+ist es ein bisschen breit.
+
+    Platz Name                  Spiele      Sätze       SD      Bälle       BD
+       1. Asterix                  3 :    0    6 :    1     5     76 :   53    23
+       2. Gaius Iulius Caesar      2 :    1    5 :    3     2     82 :   62    20
+       3. Obelix                   1 :    2    3 :    4    -1     59 :   57     2
+       4. Gaius Bonus              0 :    3    0 :    6    -6     21 :   66   -45
+
+"Platz" und "Name" sind eindeutig. "Spiele", "Sätze" und "Bälle"
+repräsentieren die gespielten Spiele, Sätze und Bälle im Format
+"gewonnen : verloren". SD und BD stellen die Satz- bzw. Balldifferenz
+dar.
+
+
+
+=head1 EIN GROSSES BEISPIEL oder TUTORIUM (wie's beliebt)
+
+Da all diese Sachen oben sehr theoretisch bzw. schwer verständlich
+sind, werde ich hier noch ein großes Beispiel vom Ablauf der Dinge
+während eines Turniers geben. Dieser Teil kann auch als Tutorium
+angesehen werden, das die Gewöhnung an B<myrtscht> einfacher macht.
+
+Um also anzufangen: Wir stellen uns vor, wir seien die Organisatoren
+eines jährlich stattfindenden Tischtennisturniers und wir haben von
+B<myrscht> gehört. Glücklichweise haben wir einen Computer,
+installieren jenes Programm und freuen uns auf das Ereignis, da es
+ja dank B<myrscht> nicht so kolossal anstrengend wird wie in den
+letzten Jahren. Unglücklicherweise ist die Person, die für die Werbung 
+verantwortlich war, krank geworden und sind nur elf Leute da. Egal!
+Iulius Caesar ist da und wir wollen ihn nicht enttäuschen.
+
+Aber nun, fangen wir an, mit dem neuen Werkzeug zu arbeiten!
+
+Zuerst initialisieren wir das Turnier:
+
+    $ myrtscht -n Aremorica-Open-50vChr -g 2
+    $ cd Aremorica_Open-50vChr
+    $ ls
+    01.g  02.g
+
+An unserem Tisch haben sich vier Frauen und sieben Männer angemeldet,
+also machen wir zwei Gruppen aus ihnen. (Seht! Wir waren so
+voraussichtig, dass wir nur zwei Gruppendateien erstellt haben.)
+
+    $ vim 01.g          # natürlich benutzen wir vim(1)
+    $ cat 01.g
+    Name: Frauen
+    Tische: 1
+    Gutemine
+    Frau Automatix
+    Maestria
+    Jellosubmarine
+    $ vim 02.g
+    $ cat 01.g
+    Name: Männer
+    Tables: 2, 3
+    Asterix
+    Obelix
+    Gaius Iulius Caesar
+    Gaius Bonus
+    Teefax
+    Numerobis
+    Idefix
+
+Da wir den Drucker schon eingerichtet haben, können wir sofort damit
+beginnen, die Gruppenverzeichnisse einzurichten. Dass er nicht der
+Standarddrucker ist, ist das einzige Problem. Deswegen müssen wir den
+Drucker explizit angeben:
+
+    $ myrtscht -p *.g -P GS-Printfix-50BC
+    $ ls
+    01.d  02.d
+    $ ls *.d
+    01.d:
+    01.g  01.s  02.s  03.s  04.s  05.s  06.s    
+
+    02.d:
+    01.s  03.s  06.s  09.s  12.s  15.s  18.s  21.s
+    02.g  04.s  07.s  10.s  13.s  16.s  19.s
+    02.s  05.s  08.s  11.s  14.s  17.s  20.s
+
+Nun gibt es zwei Möglichkeiten: Entweder wir geben den Schiedsrichter
+die ganzen Spielzettel, entspannen uns jetzt und haben nachher Stress,
+oder wir teilen die Spielzettel in die Teile, die zu den einzelnen
+Spielen gehören, entspannen uns nie wegen der kontinuierlich
+hereinkommenden Papierchen und haben nachher etwas weniger Aufregung.
+
+Egal, wenn die Schiedsrichter die Spielzettel bekommen haben, kann der
+Spielbetrieb beginnen, sie können die Ergebnisse in einfacher Weise
+auf die Zettel schreiben und wir haben nur die Aufgabe, sie in den
+Computer einzutragen. Ich empfehle dies in vim(1) und mit Tabs zu tun:
+
+    $ vim -p 01.d/*.s
+    $ cat 01.d/*.s
+    Maestria | Jellosubmarine
+    8   11
+    12  10
+    9   11
+    Gutemine | Frau Automatix
+    11  4
+    11  8
+    Maestria | Gutemine
+    4   11
+    3   11
+    Jellosubmarine | Frau Automatix
+    14  16
+    12  10
+    18  20
+    Maestria | Frau Automatix
+    3   11
+    8   11
+    Gutemine | Jellosubmarine
+    11  7
+    5   11
+    9   11
+    $ vim -p 02.d/*.s
+    # Ich lasse das "cat" hier aus. Es bräuchte zu viel Platz.
+
+=head3 Bemerkung:
+
+Dank der ID auf den Spielzetteln ist es relativ einfach, die
+zugehörige Spieldatei herauszufinden. Die ersten zwei Stellen sind mit
+der Nummer des Gruppenverzeichnisses, die letzten zwei oder drei mit
+der Nummer der Spieldatei gleichbedeutend.
+
+Sobald wir das getan haben, sind wir natürlich gespannt auf die
+Ergebnisse:
+
+    $ myrtscht -a 01.d
+    $ cat 01.d/Platzierungen
+    Platz Name                  Spiele      Sätze       SD      Bälle       BD   
+       1. Gutemine                 2 :    1    5 :    2     3     69 :   48    21
+       2. Jellosubmarine           2 :    1    5 :    4     1    105 :  100     5
+       3. Frau Automatix           2 :    1    4 :    3     1     80 :   77     3
+       4. Maestria                 0 :    3    1 :    6    -5     47 :   76   -29
+    $ cd 02.d
+    $ myrtscht -a *.s
+    $ cat Platzierungen
+    Platz Name                  Spiele      Sätze       SD      Bälle       BD   
+       1. Teefax                   6 :    0   12 :    0    12    140 :  104    36
+       2. Asterix                  5 :    1   10 :    3     7    148 :  105    43
+       3. Numerobis                4 :    2    8 :    5     3    134 :  108    26
+       4. Gaius Iulius Caesar      3 :    3    7 :    7     0    134 :  116    18
+       5. Obelix                   2 :    4    5 :    9    -4    123 :  150   -27
+       6. Idefix                   1 :    5    4 :   10    -6    118 :  134   -16
+       7. Gaius Bonus              0 :    6    0 :   12   -12     52 :  132   -80
+
+
+Sehr gut! Das Turnier ist zu Ende. - Lasst uns den Computer
+ausschalten und ein wenig feiern.
+
+    $ su -c 'shutdown -h now'
+
+
+
+=head1 BEMERKUNGEN
+
+=over
+
+=item -
+
+B<myrtscht> passt nicht auf, ob die Eingabedaten sinnvoll, gültig und
+regelgerecht sind.
+
+=item -
+
+B<myrtscht> passt nicht auf, ob die angegebenen Kommandozeilenoptionen
+sinnvoll sind.
+
+=item -
+
+Sollte es irgendwelche Fehler in meiner Rechtschreibung oder Grammatik
+geben, bitte entschuldigen Sie und schreiben Sie mir! Bei Fehlern, die
+ich nicht korrigiere, weicht meine Hausorthographie von der
+allgemeingültigen deutschen Rechtschreibung ab.
+
+=item -
+
+Wenn irgendjemand meine Art der Dokumentation nicht mag - bitte
+schreiben Sie mir!
+
+=item -
+
+Mein Name wir mit "o Umlaut" geschrieben, aber perldoc(1) mag die
+korrekte Schreibung nicht - genauso wie die all der anderen deutschen
+Wörter, die mit Umlauten oder scharfem S geschrieben werden. Wenn Sie
+die korrekte Schreibung sehen wollen, benutzen Sie bitte
+S<C<pod2man --utf8 myrtscht | nroff -Tlatin1 -man | less>> instead of
+running with B<-h> or B<--help>!
+
+=back
+
+
+
+=head1 BUGS
+
+Wenn man Umlaute per Format druckt, wird das Layout
+etwas durcheinandergebracht, da Umlaute wie ein Buchstabe gedruckt, aber
+wie zwei Buchstaben gedruckt werden. - Ich denke, das ist ein Problem,
+das nicht bloß bei mir auftritt und auch schon eine Lösung gefunden
+hat -, die aber noch nicht bei mir angekommen ist. Vielleicht kann ja
+irgendeiner, der das liest helfen.
+
+Den Fehler, dass unbekannte oder keine Kommandozeilenoptionen
+angegeben werden, wollte ich eigentlich mit einem C<pod2usage(2)>
+abfangen, wie dies auch in der englischen Version dieses Programms der
+Fall ist. Merkwürdigerweise funktioniert dies aber nicht - es wird keine
+Hilfemeldung ausgegeben. Deshalb musste ich es so ändern, dass die
+vollständige Dokumentation ausgegeben wird, was natürlich hässlich ist.
+Es gibt auch schon zwei angefangene Diskussionen auf
+L<www.perlmonks.org>, die aber scheinbar auch zu nichts geführt haben.
+
+Wenn jemand noch andere Fehler findet - schreiben Sie mir! Es wird
+auch eine Website geben und ich will das Programm auf
+L<GNU Savannah|http://savannah.nongnu.org> hochladen. Es gibt also
+Hoffnung auf einen richtigen Bugtracker.
+
+
+
+=head1 SIEHE AUCH
+
+L<Games::Tournament::RoundRobin>, L<Log::Log4perl>
+
+Wenn ich etwas Zeit finde (vielleicht im Sommer), wird es auch eine
+über dieses Programm (und andere Sachen) geben. Aber die aktuelle
+Version ist immer auf L<www.myrtscht.de|http://www.myrtscht.de> verfügbar
+(auf Deutsch und Englisch).
+
+
+
+=head1 AUTOR
+
+Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 by Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+This program is free software.  You may copy or redistribute it under
+the same terms as Perl itself.
+
+=cut
