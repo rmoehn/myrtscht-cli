@@ -26,14 +26,17 @@ GetOptions(
         'P:s'    => \$Options{P},
 ) or pod2usage(2);
 
-# set up some general variables
-my $Etcpath = "/home/moses/Perl/Myrtscht/etc";
-# Because CUPS is one base of this program I don't use the portable
-# variant with File::Spec.
+#|||||||||||||||||||||||||||||||||
+#        ||
+#|||||||||||||||||||||||||||||||||
 
 # initialize the logger or not
 if (defined $Options{d}) {
-    Log::Log4perl->init($Options{d} || "$Etcpath/log.conf");
+    #                           Adjust here, if needed!
+    #                                   vvvvvvvv
+    Log::Log4perl->init($Options{d} || "log.conf");
+    # Because CUPS is one base of this program I don't use the portable
+    # variant with File::Spec.
     INFO "Initialized.";
 
     # little debbugging help
@@ -45,7 +48,7 @@ if (defined $Options{d}) {
 
 # invoke the subroutines corresponding to the options
 {
-my @arguments = (\$Etcpath, \%Options, \@ARGV);
+my @arguments = (\%Options, \@ARGV);
 if (defined $Options{n}) {
     INFO "Invoking the subroutine creating a new tournament.";
     &create_new_tournament(@arguments);
@@ -65,7 +68,6 @@ if (defined $Options{n}) {
 
 # the subroutine invoked if the option -n is defined
 sub create_new_tournament {
-    my $etcpath               = shift;
     my $options               = shift;
     my $specified_groupfnames = shift;
 
@@ -109,7 +111,6 @@ EOF
 
 # the subroutine invoked if the option -p is defined
 sub process_group_files {
-    my $etcpath    = shift;
     my $options    = shift;
     my $groupfiles = shift;
     my $cwd        = getcwd;
@@ -279,7 +280,6 @@ sub process_group_files {
 # But it just preprocesses and gives the files directly to the
 # true processing subroutine.
 sub preprocess_game_files {
-    my $etcpath         = shift;
     my $options         = shift;
     my $file_containing = shift;
 
@@ -294,19 +294,18 @@ sub preprocess_game_files {
         @$file_containing = readdir GROUPDIR;
         closedir GROUPDIR;
         chdir $dirname
-            or die "Couldn't change into group directory $dirname: $!\n";
+            or die "Couldn't change into groupdirectory $dirname: $!\n";
     } else {
         DEBUG "We have a list of game files given.";
     }
     my @gamefiles = grep { /\.s$/ } @$file_containing;
     DEBUG "Giving game files @gamefiles to the game file processor.";
-    &process_game_files($etcpath, $options, \@gamefiles);
+    &process_game_files($options, \@gamefiles);
 }
 
 # process the game files
 sub process_game_files {
     no warnings;
-    my $etcpath   = shift;
     my $options   = shift;
     my $gamefiles = shift;
     my (%players, $player, $rank);
@@ -387,8 +386,8 @@ sub process_game_files {
 
     # sort the people according to their games
     my @ranking = sort {
-        $players{$b}{wins}            <=> $players{$a}{wins}           or
-        $players{$b}{set_difference}  <=> $players{$a}{set_difference} or
+        $players{$b}{wins}           <=> $players{$a}{wins}           or
+        $players{$b}{set_difference} <=> $players{$a}{set_difference} or
         $players{$b}{ball_difference} <=> $players{$a}{ball_difference}
     } keys %players;
     DEBUG "Sorted all the stuff.";
@@ -532,7 +531,7 @@ tournament are stored in.  It is recommended to stay in this or
 subordinated directories when working with B<myrtscht>.
 
 
-=head2 Group Files F<*.g>
+=head2 The Group Files F<*.g>
 
 These are the files you are going to see first when running a
 tournament.  Their format (before editing) is:
@@ -541,13 +540,12 @@ tournament.  Their format (before editing) is:
     Tables:
     Members:
 
-Z<>
-Behind "Name: " you have to write down the name of the group.  Behind
-"Tables: " the names (numbers are recommended) of the tables the group
-plays at stand in a comma separated list. (Yes there are also other
-separators possible.  Look in the source code if you want them 
-implicitly!)  I<Under> "Members:" you have to write the names of the
-members of the group.
+Z<> Behind S<"Name: "> you have to write down the name of the group.
+Behind S<"Tables: "> the names (numbers are recommended) of the tables
+the group plays at stand in a comma separated list. (Yes there are
+also other separators possible.  Look in the source code if
+you want them implicitly!)  I<Under> "Members:" you have to
+write the names of the members of the group.
 
 =head3 Example:
 
@@ -574,7 +572,7 @@ be done within the particular directory, thus the group file is moved
 into the directory when running with B<-p>.
 
 
-=head2 Game Files F<*.s>
+=head2 The Game Files F<*.s>
 
 These are the files being in a group directory after running with B<-p>.
 They look like this (before editing):
@@ -612,16 +610,16 @@ the parts of the printout will have this format (here just an example):
                           |
     ----------------------+---------------------
 
-Each of this parts represents one game.  Behind "Group: " is the name
-of the group situated.  "Round: " is the round they play in, "Table: "
-the name of the table they play at.  The "ID" is formed out of the
-names of the group directory (first two digits) and the game file
-(last two or three digits).  Hence you can easily identify the game
-file belonging to the particular game sheet.  (This is also
-demonstrated down below.)  Then the names of the opponents
-come and in the space below the referee can write down the result of
-the match.  The height of this space varies with the number of rounds
-to play to win a match.
+Each of this parts represents one game.  Behind S<"Group: "> is the
+name of the group situated.  S<"Round: "> is the round they play in,
+S<"Table: "> the name of the table they play at.  The "ID" is
+formed out of the names of the group directory (first two digits)
+and the game file (last two or three digits).  Hence you can
+easily identify the game file belonging to the particular game
+sheet.  (This is also demonstrated down below.)  Then the names of
+the opponents come and in the space below the referee can write
+down the result of the match.  The height of this space varies
+with the number of rounds to play to win a match.
 
 
 =head2 The Ranking File F<ranking>
@@ -650,9 +648,9 @@ example of the order of events in a tournament.  You can see this part
 also as a tutorial which makes getting used to B<myrtscht> easy.
 
 So let us start: Imagine, we are the organizers of a yearly table
-tennis tournament and we have heard of B<myrtscht>.  Luckily we
-have a computer, we install the program and look forward to the
-event, since it will not become such tremendous arduous like the last
+tennis tournament and we have heard of B<myrtscht>.  Luckily we have a
+computer, we install the program and look forward to the event first
+time, as it will not become such tremendous arduous like the last
 years because of having B<myrtscht>.  Unfortunately the person
 responsible for advertising has become ill and now there are just
 eleven persons to play.  Whatever! Iulius Caesar is here and we do not
@@ -680,7 +678,7 @@ have created just two group files.)
     Bravura
     Bacteria
     $ vim 02.g
-    $ cat 01.g
+    $ cat 02.g
     Name: Men
     Tables: 2, 3
     Asterix
@@ -747,16 +745,16 @@ vim(1) and with tabs:
 
 =head3 Note:
 
-Thanks to the ID on the game sheets it is very easy to discover the 
-related game file.  The first two digits are synonymous with the number of
-the group directory, the last two to three with the number of the game 
-file.
+Thanks to the ID on the game sheets it is very easy to discover the
+related game file.  The first two digits are synonymous with the
+number of the group directory, the last two to three with the number
+of the game file.
 
 =head4 Example:
 
         04.s
          /\
-   ID: 0304        ==> vim 03.d/04.s
+   ID: 0304   ==> vim 03.d/04.s
        \/
       03.d
 
@@ -806,10 +804,10 @@ senseful.
 
 =item -
 
-It is required to have a printout with 67 lines per page.  In later version, when
-B<myrtscht> makes use of configuration files, there will be easy support for other
-numbers.  Now you can change the code, too, though.---That should not be such
-difficult.
+It is required to have a printout with 67 lines per page.  In later
+version, when B<myrtscht> makes use of configuration files, there will
+be easy support for other numbers.  Now you can change the code, too,
+though.---That should not be such difficult.
 
 =item -
 

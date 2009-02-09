@@ -32,14 +32,13 @@ GetOptions(
         -verbose => 2,
                 } );
 
-# set up some general variables
-my $Etcpath = "/home/moses/Perl/Myrtscht/etc";
-# Because CUPS is one base of this program I don't use the portable
-# variant with File::Spec.
-
 # initialize the logger or not
 if (defined $Options{d}) {
-    Log::Log4perl->init($Options{d} || "$Etcpath/log.conf");
+    #                           Hier anpassen, wenn gewünscht!
+    #                                   vvvvvvvv
+    Log::Log4perl->init($Options{d} || "log.conf");
+    # Because CUPS is one base of this program I don't use the portable
+    # variant with File::Spec.
     INFO "Initialized.";
 
     # little debbugging help
@@ -51,7 +50,7 @@ if (defined $Options{d}) {
 
 # invoke the subroutines corresponding to the options
 {
-my @arguments = (\$Etcpath, \%Options, \@ARGV);
+my @arguments = (\%Options, \@ARGV);
 if (defined $Options{n}) {
     INFO "Invoking the subroutine creating a new tournament.";
     &create_new_tournament(@arguments);
@@ -71,7 +70,6 @@ if (defined $Options{n}) {
 
 # the subroutine invoked if the option -n is defined
 sub create_new_tournament {
-    my $etcpath               = shift;
     my $options               = shift;
     my $specified_groupfnames = shift;
 
@@ -115,7 +113,6 @@ EOF
 
 # the subroutine invoked if the option -p is defined
 sub process_group_files {
-    my $etcpath    = shift;
     my $options    = shift;
     my $groupfiles = shift;
     my $cwd        = getcwd;
@@ -289,7 +286,6 @@ sub process_group_files {
 # But it just preprocesses and gives the files directly to the
 # true processing subroutine.
 sub preprocess_game_files {
-    my $etcpath         = shift;
     my $options         = shift;
     my $file_containing = shift;
 
@@ -311,13 +307,12 @@ sub preprocess_game_files {
     }
     my @gamefiles = grep { /\.s$/ } @$file_containing;
     DEBUG "Gebe Spieldateien @gamefiles dem Spieldateiverarbeiter.";
-    &process_game_files($etcpath, $options, \@gamefiles);
+    &process_game_files($options, \@gamefiles);
 }
 
 # process the game files
 sub process_game_files {
     no warnings;
-    my $etcpath   = shift;
     my $options   = shift;
     my $gamefiles = shift;
     my (%players, $player, $rank);
@@ -398,8 +393,8 @@ sub process_game_files {
 
     # sort the people according to their games
     my @ranking = sort {
-        $players{$b}{wins}            <=> $players{$a}{wins}           or
-        $players{$b}{set_difference}  <=> $players{$a}{set_difference} or
+        $players{$b}{wins}           <=> $players{$a}{wins}           or
+        $players{$b}{set_difference} <=> $players{$a}{set_difference} or
         $players{$b}{ball_difference} <=> $players{$a}{ball_difference}
     } keys %players;
     DEBUG "Alles sortiert.";
@@ -469,14 +464,14 @@ myrtscht B<-h>
 
 =head1 BESCHREIBUNG
 
-B<myrtscht> dient der Verwaltung von Tischtennisturnieren im 
-Gruppensystem. Aber es sollte auch möglich sein, es für anderen Spiele zu
-verwenden. B<myrtscht> ist vollständig text- und kommandobasiert, sodass
-weder eine spezielle Kommandozeile noch eine graphische
-Benutzeroberfläche existieren, ich bitte um Entschuldigung (, falls
-das entschuldigt werden muss). Wie Sie in der Übersicht sehen können,
-bedient man es also, in dem man Befehle gibt und Textdateien
-bearbeitet.
+B<myrtscht> dient der Verwaltung von Tischtennisturnieren im
+Gruppensystem. Aber es sollte auch möglich sein, es für anderen Spiele
+zu verwenden, sofern diese kein Unentschieden erlauben. B<myrtscht>
+ist vollständig text- und kommandobasiert, sodass weder eine eigene
+Kommandozeile noch eine graphische Benutzeroberfläche existieren, ich
+bitte um Entschuldigung (, falls das entschuldigt werden muss). Wie
+Sie in der Übersicht sehen können, bedient man es also, indem man
+Befehle eingibt und Textdateien bearbeitet.
 
 
 =head1 OPTIONEN UND ARGUMENTE
@@ -485,20 +480,20 @@ bearbeitet.
 
 =item B<-n> [I<Turniername>]
 
-Erstellt ein neues, für das Turnier genutztes Verzeichnis mit den
+Erstellt ein neues, für das Turnier genutztes, Verzeichnis mit den
 Gruppendateien darin. Sie können auch einen Namen für das Verzeichnis
 angeben, was keine Auswirkung auf die Gruppendateien hat.
-Normalerweise ist der Name "Turnier-<Datum>".
+Normalerweise ist der Name F<< Turnier-<Datum> >>.
 
 =item B<-g> I<Gruppenzahl>
 
-Definiert die Anzahl der bei der Ausführung mit B<-n> erstellten Gruppen.
-Die Vorgabe ist 10.
+Definiert die Anzahl der bei der Ausführung mit B<-n> erstellten
+Gruppen. Die Vorgabe ist 10.
 
 =item B<-p> I<Gruppendateien>
 
 Erstellt von jeder gegebenen I<Gruppendatei> ein Gruppenverzeichnis, das
-Spieldateien enthält, und druckt Spielzettel, auf die man die
+die Spieldateien enthält und druckt Spielzettel, auf die man die
 Ergebnisse schreiben kann, in Form von Tabellen aus.
 
 =item B<-r> I<Gewinnsätze>
@@ -518,16 +513,17 @@ wird. Die Vorgabe ist der Standarddrucker.
 =item B<-a> I<Spieldateien>/I<Gruppenverzeichnis>
 
 Berechnet die Platzierungen anhand der gegebenen I<Spieldateien> oder
-des gegebenen I<Gruppenverzeichnisses>.
+des gegebenen I<Gruppenverzeichnisses> und schreibt sie in die Datei
+F<Platzierungen>.
 
 =item B<-d> [I<Konfigurationsdatei>]
 
 Schaltet in den Debug-Modus. Das Protokoll wird unter der Verwendung
-des L<Log::Log4perl(3)|Log::Log4perl> Moduls. Es kann eine
+des L<Log::Log4perl(3)|Log::Log4perl> Moduls erstellt. Es kann eine
 I<Konfigurationsdatei> angegeben werden, die das Verhalten der
 Log-Funktionen bestimmt.
 
-=item B<-h> or B<--help>
+=item B<-h> oder B<--help>
 
 Gibt diese Hilfe aus.
 
@@ -544,11 +540,11 @@ entweder eine bestimmte Endung oder einen bestimmten Namen tragen.
 
 Das Turnierverzeichnis ist das Verzeichnis, in dem alle Informationen
 für ein Turnier gespeichert werden. Es wird empfohlen, in diesem oder
-in untergeordneten Verzeichnissen zu verweilen, wenn man mit
+in untergeordneten Verzeichnissen zu verweilen, solange man mit
 B<myrtscht> arbeitet.
 
 
-=head2 Gruppendateien F<*.g>
+=head2 Die Gruppendateien F<*.g>
 
 Dies sind die Dateien, die man als erstes zu Gesicht bekommt, wenn man
 ein Turnier veranstaltet. Ihr Format (vor dem Bearbeiten) ist:
@@ -557,19 +553,19 @@ ein Turnier veranstaltet. Ihr Format (vor dem Bearbeiten) ist:
     Tische:
     Mitglieder:
     
-Z<>
-Hinter "Name: " muss der Name der Gruppe stehen. Hinter stehen
-"Tische: " die Namen der Tische (Zahlen werden empfohlen), an denen
-die Gruppe spielt, in Form einer mit Kommas getrennten Liste. (Ja, es
-sind auch anderer Trenner möglich. Schauen Sie in den Quellcode, wenn
-Sie etwas gegen Kommas haben!) I<Unter> "Mitglieder:" sollten die
-Namen der Gruppenmitglieder stehen.
+Z<> Hinter S<"Name: "> muss der Name der Gruppe stehen. Hinter
+S<"Tische: "> stehen die Namen der Tische (Zahlen werden empfohlen),
+an denen die Gruppe spielt, in Form einer durch Kommas getrennten
+Liste. (Ja, es sind auch anderer Trenner möglich. Schauen Sie in
+den Quellcode, wenn Sie etwas gegen Kommas haben!)
+I<Unter> "Mitglieder:" sollten die Namen der Gruppenmitglieder
+stehen.
 
 =head3 Beispiel:
 
     Name: 50 vor Christus
-    Tables: 1, 2, 3
-    Members:
+    Tische: 1, 2, 3
+    Mitglieder:
     Asterix
     Obelix
     Gaius Iulius Caesar
@@ -587,13 +583,13 @@ Gruppenverzeichnisse werden erstellt, wenn man B<myrtscht> mit der
 Option B<-p> ausführt. Abgesehen von der Dateiendung tragen sie den
 Namen der Gruppendatei, zu der sie gehören. Alle Dinge, die mit einer
 Gruppe zu tun haben, sollten im jeweiligen Verzeichnis erledigt
-werden, deshalb wird auch die Gruppendatei in das Gruppenverzeichnis
+werden. Deshalb wird auch die Gruppendatei in das Gruppenverzeichnis
 verschoben, wenn man B<myrtscht> im B<-p>-Modus ausführt.
 
 
-=head2 Spieldateien F<*.s>
+=head2 Die Spieldateien F<*.s>
 
-Die sind die Dateien, die sich in den Gruppenverzeichnissen nach der
+Dies sind die Dateien, die sich in den Gruppenverzeichnissen nach der
 Ausfürung mit B<-p> befinden. Sie sehen so aus (vor der Bearbeitung):
 
     Asterix | Gaius Iulius Caesar
@@ -615,10 +611,11 @@ den Zahlen zu lassen.
 
 =head2 Der Ausdruck/F<Spielzettel>
 
-Wenn man B<myrtscht> mit der Option B<-p> ausführt, erstellt es die Datei
-F<Spielzettel>, sendet es an den Drucker und löscht es wieder. Wenn
-B<-s> eingeschaltet ist, ist das Drucke und Löschen ausgeschaltet. In
-beiden Fällen haben die Teile des Ausdrucks dieses Format:
+Wenn man B<myrtscht> mit der Option B<-p> ausführt, erstellt es die
+Datei F<Spielzettel>, sendet sie an den Drucker und löscht sie wieder.
+Wenn B<-s> eingeschaltet ist, ist das Drucken und Löschen
+ausgeschaltet. In beiden Fällen haben die Teile des Ausdrucks dieses
+Format:
 
     Gruppe: 50 vor Christus
     Runde: 2     Tisch: 3              ID: 0303
@@ -630,23 +627,23 @@ beiden Fällen haben die Teile des Ausdrucks dieses Format:
                           |
     ----------------------+---------------------
 
-Jeder dieser Teile repräsentiert ein Spiel. Hinter "Gruppe: " steht
-der Name der Gruppe. "Runde: " ist die Runde, in der, "Tisch: " ist
-der Tisch, an dem das Spiel stattfindet. Die "ID" wird aus den Namen
-des Gruppenverzeichnisses (die ersten zwei Ziffern) und der Spieldatei
-(die letzten zwei oder drei Ziffern) gebildet. So kann man leicht die
-Spieldatei, die zu dem jeweiligen Spielzettel gehört, herausfinden.
-(Siehe auch Beispiel weiter unten.) Dann kommen die Namen der Gegner
-und in den Platz darunter kann der Schiedsrichter die Ergebnisse eines
-Spiels schreiben. Die Höhe dieses Platzes variiert mit der Anzahl der
-Gewinnsätze.
+Jeder dieser Teile repräsentiert ein Spiel. Hinter S<"Gruppe: "> steht
+der Name der Gruppe. S<"Runde: "> ist die Runde, in der, S<"Tisch: ">
+ist der Tisch, an dem das Spiel stattfindet. Die "ID" wird aus den
+Namen des Gruppenverzeichnisses (die ersten zwei Ziffern) und der
+Spieldatei (die letzten zwei oder drei Ziffern) gebildet. So kann man
+leicht die Spieldatei, die zu dem jeweiligen Spielzettel gehört,
+herausfinden.  (Siehe auch Beispiel weiter unten.) Dann kommen
+die Namen der Gegner und in den Platz darunter kann der
+Schiedsrichter die Ergebnisse eines Spiels schreiben. Die Höhe
+dieses Platzes variiert mit der Anzahl der Gewinnsätze.
 
 
 =head2 Die Platzierungsdatei F<Platzierungen>
 
 Hier stehen die Ergebnisse einer Gruppe geschrieben. Unten sieht man
-ein Beispiel, aber um auch mit hohen Ergebnissen arbeiten zu können,
-ist es ein bisschen breit.
+ein Beispiel, allerdings ist es ein wenig breit, um auch mit hohen
+Ergebnissen arbeiten zu können,
 
 
 "Platz" und "Name" sind eindeutig. "Spiele", "Sätze" und "Bälle"
@@ -671,12 +668,13 @@ angesehen werden, das die Gewöhnung an B<myrtscht> einfacher macht.
 
 Um also anzufangen: Wir stellen uns vor, wir seien die Organisatoren
 eines jährlich stattfindenden Tischtennisturniers und wir haben von
-B<myrscht> gehört. Glücklichweise haben wir einen Computer,
-installieren jenes Programm und freuen uns auf das Ereignis, da es
-ja dank B<myrscht> nicht so kolossal anstrengend wird wie in den
-letzten Jahren. Unglücklicherweise ist die Person, die für die Werbung 
-verantwortlich war, krank geworden und sind nur elf Leute da. Egal!
-Iulius Caesar ist da und wir wollen ihn nicht enttäuschen.
+B<myrtscht> gehört. Glücklichweise haben wir einen Computer,
+installieren jenes Programm und freuen uns erstmals auf das
+Ereignis, da es ja dank B<myrscht> nicht so kolossal anstrengend
+wird wie in den letzten Jahren. Unglücklicherweise ist die Person,
+die für die Werbung verantwortlich war, krank geworden und nun sind
+nur elf Leute da. Egal! Iulius Caesar ist da und wir wollen ihn
+nicht enttäuschen.
 
 Aber nun, fangen wir an, mit dem neuen Werkzeug zu arbeiten!
 
@@ -688,7 +686,7 @@ Zuerst initialisieren wir das Turnier:
     01.g  02.g
 
 An unserem Tisch haben sich vier Frauen und sieben Männer angemeldet,
-also machen wir zwei Gruppen aus ihnen. (Seht! Wir waren so
+also machen wir zwei Gruppen aus ihnen. (Seht! Wir waren schon so
 voraussichtig, dass wir nur zwei Gruppendateien erstellt haben.)
 
     $ vim 01.g          # natürlich benutzen wir vim(1)
@@ -700,7 +698,7 @@ voraussichtig, dass wir nur zwei Gruppendateien erstellt haben.)
     Maestria
     Jellosubmarine
     $ vim 02.g
-    $ cat 01.g
+    $ cat 02.g
     Name: Männer
     Tables: 2, 3
     Asterix
@@ -728,16 +726,17 @@ Drucker explizit angeben:
     02.g  04.s  07.s  10.s  13.s  16.s  19.s
     02.s  05.s  08.s  11.s  14.s  17.s  20.s
 
-Nun gibt es zwei Möglichkeiten: Entweder wir geben den Schiedsrichter
+Nun gibt es zwei Möglichkeiten: Entweder wir geben den Schiedsrichtern
 die ganzen Spielzettel, entspannen uns jetzt und haben nachher Stress,
 oder wir teilen die Spielzettel in die Teile, die zu den einzelnen
 Spielen gehören, entspannen uns nie wegen der kontinuierlich
 hereinkommenden Papierchen und haben nachher etwas weniger Aufregung.
 
-Egal, wenn die Schiedsrichter die Spielzettel bekommen haben, kann der
-Spielbetrieb beginnen, sie können die Ergebnisse in einfacher Weise
-auf die Zettel schreiben und wir haben nur die Aufgabe, sie in den
-Computer einzutragen. Ich empfehle dies in vim(1) und mit Tabs zu tun:
+Was auch immer, wenn die Schiedsrichter die Spielzettel bekommen
+haben, kann der Spielbetrieb beginnen, sie können die Ergebnisse in
+einfacher Weise auf die Zettel schreiben und wir haben nur die
+Aufgabe, sie in den Computer einzutragen. Ich empfehle dies in vim(1)
+und mit Tabs zu tun:
 
     $ vim -p 01.d/*.s
     $ cat 01.d/*.s
@@ -828,8 +827,17 @@ sinnvoll sind.
 
 =item -
 
+Es ist notwendig, dass der Ausdruck 67 Zeilen je Blatt hat. In
+späteren Versionen, wenn B<myrtscht> Konfigurationsdateien benutzt
+oder ich eine andere Möglichkeit implementiere, werden auch andere
+Anzahlen möglich sein. Zur Zeit können Sie natürlich den Quellcode an
+Ihre Bedürfnisse anpassen oder einen Patch schreiben, der das Problem
+ganz umgeht. - Ich nehme Ihre Vorschläge gern an.
+
+=item -
+
 Sollte es irgendwelche Fehler in meiner Rechtschreibung oder Grammatik
-geben, bitte entschuldigen Sie und schreiben Sie mir! Bei Fehlern, die
+geben - bitte entschuldigen Sie und schreiben Sie mir! Bei Fehlern, die
 ich nicht korrigiere, weicht meine Hausorthographie von der
 allgemeingültigen deutschen Rechtschreibung ab.
 
@@ -844,8 +852,8 @@ Mein Name wir mit "o Umlaut" geschrieben, aber perldoc(1) mag die
 korrekte Schreibung nicht - genauso wie die all der anderen deutschen
 Wörter, die mit Umlauten oder scharfem S geschrieben werden. Wenn Sie
 die korrekte Schreibung sehen wollen, benutzen Sie bitte
-S<C<pod2man --utf8 myrtscht | nroff -Tlatin1 -man | less>> instead of
-running with B<-h> or B<--help>!
+S<C<pod2man --utf8 myrtscht | nroff -Tlatin1 -man | less>> anstatt
+B<myrtscht> mit B<-h> oder B<--help> auszuführen!
 
 =back
 
@@ -855,18 +863,18 @@ running with B<-h> or B<--help>!
 
 Wenn man Umlaute per Format druckt, wird das Layout
 etwas durcheinandergebracht, da Umlaute wie ein Buchstabe gedruckt, aber
-wie zwei Buchstaben gedruckt werden. - Ich denke, das ist ein Problem,
+wie zwei Zeichen gezählt werden. - Ich denke, das ist ein Problem,
 das nicht bloß bei mir auftritt und auch schon eine Lösung gefunden
 hat -, die aber noch nicht bei mir angekommen ist. Vielleicht kann ja
 irgendeiner, der das liest helfen.
 
 Den Fehler, dass unbekannte oder keine Kommandozeilenoptionen
 angegeben werden, wollte ich eigentlich mit einem C<pod2usage(2)>
-abfangen, wie dies auch in der englischen Version dieses Programms der
+abfangen, wie es auch in der englischen Version dieses Programms der
 Fall ist. Merkwürdigerweise funktioniert dies aber nicht - es wird keine
 Hilfemeldung ausgegeben. Deshalb musste ich es so ändern, dass die
 vollständige Dokumentation ausgegeben wird, was natürlich hässlich ist.
-Es gibt auch schon zwei angefangene Diskussionen auf
+Es gibt dazu auch schon zwei angefangene Diskussionen auf
 L<www.perlmonks.org>, die aber scheinbar auch zu nichts geführt haben.
 
 Wenn jemand noch andere Fehler findet - schreiben Sie mir! Es wird
@@ -881,9 +889,10 @@ Hoffnung auf einen richtigen Bugtracker.
 L<Games::Tournament::RoundRobin>, L<Log::Log4perl>
 
 Wenn ich etwas Zeit finde (vielleicht im Sommer), wird es auch eine
-über dieses Programm (und andere Sachen) geben. Aber die aktuelle
-Version ist immer auf L<www.myrtscht.de|http://www.myrtscht.de> verfügbar
-(auf Deutsch und Englisch).
+Website über dieses Programm (und andere Sachen) geben. Aber die
+aktuelle Version ist immer auf
+L<www.myrtscht.de|http://www.myrtscht.de> verfügbar (auf Deutsch und
+Englisch).
 
 
 
