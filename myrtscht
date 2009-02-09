@@ -43,7 +43,6 @@ if (defined $Options{d}) {
     }
 }
 
-
 # invoke the subroutines corresponding to the options
 {
 my @arguments = (\$Etcpath, \%Options, \@ARGV);
@@ -136,7 +135,7 @@ sub process_group_files {
     my($groupname, $id, $table, $roundcnt, $member1, $member2);
     my $printoutform = 
           "format GAMEPRINT =                                      \n"
-        . 'Group: @'   . '<' x 36                               . "\n"
+        . 'Group: @' . '<' x 36                                 . "\n"
         . '$groupname'                                          . "\n"
         . 'Round: @<<<< Table: @<<<<' . ' ' x 10 . 'ID: @<<<<'  . "\n"
         . '$roundcnt, $table, $id'                              . "\n"
@@ -155,7 +154,7 @@ sub process_group_files {
     # invoke the spooler or not
     unless (defined $options->{s}) {
         my $cups = Net::CUPS->new()
-            or warn "Couldn't get a nice CUPS - we "
+            or warn "Couldn't get a nice CUPS---we "
                   . "won't be able to print.\n";
         $printer = $cups->getDestination($options->{P})
             or warn "Couldn't get your printer's destination: "
@@ -295,7 +294,7 @@ sub preprocess_game_files {
         @$file_containing = readdir GROUPDIR;
         closedir GROUPDIR;
         chdir $dirname
-            or die "Couldn't change into $dirname: $!\n";
+            or die "Couldn't change into group directory $dirname: $!\n";
     } else {
         DEBUG "We have a list of game files given.";
     }
@@ -425,9 +424,6 @@ $players{$player}{ball_difference} || 0
 }
 .
 }
-
-
-
 
 __END__
 
