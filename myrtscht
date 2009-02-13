@@ -5,11 +5,13 @@ use strict;
 use warnings;
 use Log::Log4perl qw/ :easy /;
 use Cwd;
-use Getopt::Long qw/ :config no_ignore_case bundling /;
+use Getopt::Long qw/ :config no_ignore_case bundling auto_version /;
 use Games::Tournament::RoundRobin;
 use Net::CUPS;
 use Net::CUPS::Destination;
 use Pod::Usage;
+
+our $VERSION = '0.1rc2';
 
 # set up all the nice options
 pod2usage(2) unless @ARGV;  # no options are no good
@@ -25,10 +27,6 @@ GetOptions(
         'd:s'    => \$Options{d},
         'P:s'    => \$Options{P},
 ) or pod2usage(2);
-
-#|||||||||||||||||||||||||||||||||
-#        ||
-#|||||||||||||||||||||||||||||||||
 
 # initialize the logger or not
 if (defined $Options{d}) {
@@ -434,12 +432,6 @@ myrtscht - My Round robin Tournament SCHeduling for Table tennis
 
 
 
-=head1 VERSION
-
-0.1rc2
-
-
-
 =head1 SYNOPSIS
 
 myrtscht B<-n> [I<name>] [B<-g> I<number>] [B<-d> [I<file>]]
@@ -451,6 +443,8 @@ myrtscht B<-a> I<files>/I<directory> [B<-d> [I<file>]]
 myrtscht B<--help>
 
 myrtscht B<-h>
+
+myrtscht B<--version>
 
 
 
@@ -514,6 +508,10 @@ I<file> to modify the output.
 =item B<-h> or B<--help>
 
 Print this help.
+
+=item B<--version>
+
+Print the version and exit.
 
 =back
 

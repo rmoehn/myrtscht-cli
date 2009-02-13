@@ -11,6 +11,8 @@ use Net::CUPS;
 use Net::CUPS::Destination;
 use Pod::Usage;
 
+our $VERSION = '0.1rc2';
+
 # set up all the nice options
 pod2usage( {
         -exitval => 2,
@@ -441,12 +443,6 @@ myrtscht - My Round robin Tournament SCHeduling for Table tennis
 
 
 
-=head1 VERSION
-
-0.1rc2
-
-
-
 =head1 ÜBERSICHT
 
 myrtscht B<-n> [I<Turniername>] [B<-g> I<Gruppenzahl>] [B<-d> [I<Datei>]]
@@ -526,6 +522,10 @@ Log-Funktionen bestimmt.
 =item B<-h> oder B<--help>
 
 Gibt diese Hilfe aus.
+
+=item B<--version>
+
+Gibt die Version aus und beendet.
 
 =back
 
