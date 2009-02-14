@@ -68,7 +68,6 @@ if (defined $Options{n}) {
 }
 }
 
-
 __END__
 
 =encoding utf8
@@ -514,8 +513,8 @@ Es gibt dazu auch schon zwei angefangene Diskussionen auf
 L<www.perlmonks.org>, die aber scheinbar auch zu nichts geführt haben.
 
 Wenn jemand noch andere Fehler findet - schreiben Sie mir! Es wird
-auch eine Website geben und ich will das Programm auf
-L<GNU Savannah|http://savannah.nongnu.org> hochladen. Es gibt also
+auch eine Website geben und ich will das Programm (und die zugehörige
+Distribution) im CPAN zur Verfügung stellen Es gibt also
 Hoffnung auf einen richtigen Bugtracker.
 
 
