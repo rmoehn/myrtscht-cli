@@ -36,7 +36,8 @@ GetOptions(
 if (defined $Options{d}) {
     #                           Hier anpassen, wenn gewünscht!
     #                                   vvvvvvvv
-    Log::Log4perl->init($Options{d} || "log.conf");
+    Log::Log4perl->init($Options{d} ||
+            "/home/moses/Perl/Myrtscht/log.conf");
     # Because CUPS is one base of this program I don't use the portable
     # variant with File::Spec.
     INFO "Initialized.";
