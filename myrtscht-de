@@ -9,7 +9,7 @@ use Pod::Usage;
 use lib '/home/moses/Perl/Myrtscht/lib';
 use Games::Tournament::TableTennisDe;
 
-our $VERSION = '0.1rc2';
+our $VERSION = '0.02';
 
 # set up all the nice options
 pod2usage( {
@@ -33,27 +33,27 @@ GetOptions(
                 } );
 
 # initialize the logger or not
-#if (defined $Options{d}) {
-#    #                           Hier anpassen, wenn gewünscht!
-#    #                                   vvvvvvvv
-#    Log::Log4perl->init($Options{d} ||
-#            "/home/moses/Perl/Myrtscht/log.conf");
-#    # Because CUPS is one base of this program I don't use the portable
-#    # variant with File::Spec.
-#    INFO "Initialized.";
-#
-#    # little debbugging help
-#    for my $option (keys %Options) {
-#        DEBUG "Set option $option to $Options{$option}." # my favourite
-#            if defined $Options{$option};                # part
-#    }
-#}
-print "huhu: $TRACE\n";
-Log::Log4perl->easy_init( {
-    level  => $INFO,
-#    file   => '>>bla.log',
-    layout => '%d: [%L] %m %n',
-    } );
+if (defined $Options{d}) {
+    my %loglevels = (
+            1 => 5000,
+            2 => 10000,
+            3 => 20000,
+            4 => 30000,
+            5 => 40000,
+            6 => 50000,
+            );
+
+    Log::Log4perl->easy_init( {
+        level  => $loglevels{$Options{d} || 1},
+        layout => '%d: [%L] %m %n',
+        } );
+
+    # little debbugging help
+    for my $option (keys %Options) {
+        DEBUG "Set option $option to $Options{$option}." # my favourite
+            if defined $Options{$option};                # part
+    }
+}
 
 # invoke the subroutines corresponding to the options
 {
@@ -88,12 +88,12 @@ myrtscht - My Round robin Tournament SCHeduling for Table tennis
 
 =head1 ÜBERSICHT
 
-myrtscht B<-n> [I<Turniername>] [B<-g> I<Gruppenzahl>] [B<-d> [I<Datei>]]
+myrtscht B<-n> [I<Turniername>] [B<-g> I<Gruppenzahl>] [B<-d> [I<Level>]]
 
 myrtscht B<-p> I<Dateien> [B<-r> I<Gewinnsätze>] [B<-s>]
-[B<-P> I<Drucker>] [B<-d> [I<Datei>]]
+[B<-P> I<Drucker>] [B<-d> [I<Level>]]
 
-myrtscht B<-a> I<Spieldateien>/I<Gruppenverzeichnis> [B<-d> [I<Datei>]]
+myrtscht B<-a> I<Spieldateien>/I<Gruppenverzeichnis> [B<-d> [I<Level>]]
 
 myrtscht B<--help>
 
@@ -155,12 +155,12 @@ Berechnet die Platzierungen anhand der gegebenen I<Spieldateien> oder
 des gegebenen I<Gruppenverzeichnisses> und schreibt sie in die Datei
 F<Platzierungen>.
 
-=item B<-d> [I<Konfigurationsdatei>]
+=item B<-d> [I<Level>]
 
 Schaltet in den Debug-Modus. Das Protokoll wird unter der Verwendung
-des L<Log::Log4perl(3)|Log::Log4perl> Moduls erstellt. Es kann eine
-I<Konfigurationsdatei> angegeben werden, die das Verhalten der
-Log-Funktionen bestimmt.
+des L<Log::Log4perl(3)|Log::Log4perl> Moduls erstellt. Es kann ein
+DebugI<level> von 1 bis 6 angegeben werden, das die Anzahl der
+Meldungen reguliert. Der Standardwert ist 1.
 
 =item B<-h> oder B<--help>
 
@@ -277,10 +277,10 @@ Namen des Gruppenverzeichnisses (die ersten zwei Ziffern) und der
 Spieldatei (die letzten zwei oder drei Ziffern) gebildet. So kann man
 leicht die Spieldatei, die zu dem jeweiligen Spielzettel gehört,
 herausfinden.  (Siehe auch
-C<Games::Tournament::Myrtscht::TutDe>.) Dann kommen die
-Namen der Gegner und in den Platz darunter kann der
-Schiedsrichter die Ergebnisse eines Spiels schreiben. Die Höhe
-dieses Platzes variiert mit der Anzahl der Gewinnsätze.
+L<Games::Tournament::Myrtscht::TutDe|Games::Tournament::Myrtscht::TutDe> .) Dann kommen die Namen der Gegner und in den Platz
+darunter kann der Schiedsrichter die Ergebnisse eines Spiels
+schreiben. Die Höhe dieses Platzes variiert mit der Anzahl der
+Gewinnsätze.
 
 
 =head2 Die Platzierungsdatei F<Platzierungen>
