@@ -1,0 +1,207 @@
+=encoding utf8
+
+=head1 NAME
+
+Games::Tournament::Myrtscht::TutDe - Ein Tutorium zu B<myrtscht>
+
+
+=head1 VERSION
+
+Version 0.01
+
+
+=head1 BESCHREIBUNG
+
+Da all die Sachen in der in B<myrtscht> eingebetteten Dokumentation
+oben sehr theoretisch bzw. schwer verständlich sind, werde ich hier
+noch ein großes Beispiel vom Ablauf der Dinge während eines Turniers
+geben. Dieser Teil kann auch als Tutorium angesehen werden, das die
+Gewöhnung an B<myrtscht> einfacher macht.
+
+
+=head1 EIN GROSSES BEISPIEL oder TUTORIUM (wie's beliebt)
+
+Um also anzufangen: Wir stellen uns vor, wir seien die Organisatoren
+eines jährlich stattfindenden Tischtennisturniers und wir haben von
+B<myrtscht> gehört. Glücklichweise haben wir einen Computer,
+installieren jenes Programm und freuen uns erstmals auf das
+Ereignis, da es ja dank B<myrscht> nicht so kolossal anstrengend
+wird wie in den letzten Jahren. Unglücklicherweise ist die Person,
+die für die Werbung verantwortlich war, krank geworden und nun sind
+nur elf Leute da. Egal! Iulius Caesar ist da und wir wollen ihn
+nicht enttäuschen.
+
+Aber nun, fangen wir an, mit dem neuen Werkzeug zu arbeiten!
+
+Zuerst initialisieren wir das Turnier:
+
+    $ myrtscht -n Aremorica-Open-50vChr -g 2
+    $ cd Aremorica_Open-50vChr
+    $ ls
+    01.g  02.g
+
+An unserem Tisch haben sich vier Frauen und sieben Männer angemeldet,
+also machen wir zwei Gruppen aus ihnen. (Seht! Wir waren schon so
+voraussichtig, dass wir nur zwei Gruppendateien erstellt haben.)
+
+    $ vim 01.g          # natürlich benutzen wir vim(1)
+    $ cat 01.g
+    Name: Frauen
+    Tische: 1
+    Gutemine
+    Frau Automatix
+    Maestria
+    Jellosubmarine
+    $ vim 02.g
+    $ cat 02.g
+    Name: Männer
+    Tables: 2, 3
+    Asterix
+    Obelix
+    Gaius Iulius Caesar
+    Gaius Bonus
+    Teefax
+    Numerobis
+    Idefix
+
+Da wir den Drucker schon eingerichtet haben, können wir sofort damit
+beginnen, die Gruppenverzeichnisse einzurichten. Dass er nicht der
+Standarddrucker ist, ist das einzige Problem. Deswegen müssen wir den
+Drucker explizit angeben:
+
+    $ myrtscht -p *.g -P GS-Printfix-50BC
+    $ ls
+    01.d  02.d
+    $ ls *.d
+    01.d:
+    01.g  01.s  02.s  03.s  04.s  05.s  06.s    
+
+    02.d:
+    01.s  03.s  06.s  09.s  12.s  15.s  18.s  21.s
+    02.g  04.s  07.s  10.s  13.s  16.s  19.s
+    02.s  05.s  08.s  11.s  14.s  17.s  20.s
+
+Nun gibt es zwei Möglichkeiten: Entweder wir geben den Schiedsrichtern
+die ganzen Spielzettel, entspannen uns jetzt und haben nachher Stress,
+oder wir teilen die Spielzettel in die Teile, die zu den einzelnen
+Spielen gehören, entspannen uns nie wegen der kontinuierlich
+hereinkommenden Papierchen und haben nachher etwas weniger Aufregung.
+
+Was auch immer, wenn die Schiedsrichter die Spielzettel bekommen
+haben, kann der Spielbetrieb beginnen, sie können die Ergebnisse in
+einfacher Weise auf die Zettel schreiben und wir haben nur die
+Aufgabe, sie in den Computer einzutragen. Ich empfehle dies in vim(1)
+und mit Tabs zu tun:
+
+    $ vim -p 01.d/*.s
+    $ cat 01.d/*.s
+    Maestria | Jellosubmarine
+    8   11
+    12  10
+    9   11
+    Gutemine | Frau Automatix
+    11  4
+    11  8
+    Maestria | Gutemine
+    4   11
+    3   11
+    Jellosubmarine | Frau Automatix
+    14  16
+    12  10
+    18  20
+    Maestria | Frau Automatix
+    3   11
+    8   11
+    Gutemine | Jellosubmarine
+    11  7
+    5   11
+    9   11
+    $ vim -p 02.d/*.s
+    # Ich lasse das "cat" hier aus. Es bräuchte zu viel Platz.
+
+=head3 Bemerkung:
+
+Dank der ID auf den Spielzetteln ist es relativ einfach, die
+zugehörige Spieldatei herauszufinden. Die ersten zwei Stellen sind mit
+der Nummer des Gruppenverzeichnisses, die letzten zwei oder drei mit
+der Nummer der Spieldatei gleichbedeutend.
+
+=head4 Beispiel:
+
+       02.d
+        /\
+    ID: 0203   ==> vim 02.d/03.s
+          \/
+         03.s
+
+Sobald wir das getan haben, sind wir natürlich gespannt auf die
+Ergebnisse:
+
+    $ myrtscht -a 01.d
+    $ cat 01.d/Platzierungen
+    Rang | Name                  | Spiele  |   Sätze   |  SD  |    Bälle    |  BD
+    -----+-----------------------+---------+-----------+------+-------------+------
+      1. | Gutemine              |  2 : 1  |   5 : 2   |  3   |   69 : 48   |  21
+      2. | Jellosubmarine        |  2 : 1  |   5 : 4   |  1   |  105 : 100  |   5
+      3. | Frau Automatix        |  2 : 1  |   4 : 3   |  1   |   80 : 77   |   3
+      4. | Maestria              |  0 : 3  |   1 : 6   |  -5  |   47 : 76   |  -29
+    $ cd 02.d
+    $ myrtscht -a *.s
+    $ cat Platzierungen
+    Rang | Name                  | Spiele  |   Sätze   |  SD  |    Bälle    |  BD
+    -----+-----------------------+---------+-----------+------+-------------+------
+      1. | Teefax                |  6 : 0  |  12 : 0   |  12  |  140 : 104  |  36
+      2. | Asterix               |  5 : 1  |  10 : 3   |  7   |  148 : 105  |  43
+      3. | Numerobis             |  4 : 2  |   8 : 5   |  3   |  134 : 108  |  26
+      4. | Gaius Iulius Caesar   |  3 : 3  |   7 : 7   |  0   |  134 : 116  |  18
+      5. | Obelix                |  2 : 4  |   5 : 9   |  -4  |  123 : 150  |  -27
+      6. | Idefix                |  1 : 5  |   4 : 10  |  -6  |  118 : 134  |  -16
+      7. | Gaius Bonus           |  0 : 6  |   0 : 12  | -12  |   52 : 132  |  -80
+    
+
+Sehr gut! Das Turnier ist zu Ende. - Lasst uns den Computer
+ausschalten und ein wenig feiern.
+
+    $ su -c 'shutdown -h now'
+
+
+=head1 BEMERKUNG
+
+Mein Name wird mit "o Umlaut" geschrieben, aber perldoc(1) mag die
+korrekte Schreibung nicht - genauso wie die all der anderen deutschen
+Wörter, die mit Umlauten oder scharfem S geschrieben werden. Wenn Sie
+die korrekte Schreibung sehen wollen, benutzen Sie bitte
+S<C<pod2man --utf8 F<< <Pfad zu TutDe>/TutDe >> | nroff -Tlatin1 -man | less>>
+anstatt perldoc(1) aufzurufen auszuführen!
+
+
+=head1 SIEHE AUCH
+
+=over 4
+
+=item B<myrtscht>
+
+Das Programm selber.
+
+=item L<Games::Tournament::TableTennis>
+
+Das dem Programm zugrundeliegende Modul.
+
+=item L<Games::Tournament::Myrtscht::TutEn>
+
+Das englische Tutorium.
+
+
+=head1 AUTOR
+
+Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 by Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+This program is free software.  You may copy or redistribute it under
+the same terms as Perl itself.
+
+=cut

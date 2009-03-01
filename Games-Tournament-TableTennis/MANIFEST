@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Games-Tournament-TableTennis.t
+lib/Games/Tournament/TableTennis.pm

@@ -25,7 +25,7 @@ GetOptions(
         'r:s'    => \$Options{r},
         'g:s'    => \$Options{g},
         'n:s'    => \$Options{n},
-        'd:s'    => \$Options{d},
+        'd:i'    => \$Options{d},
         'P:s'    => \$Options{P},
 ) or pod2usage( {
         -exitval => 2,
@@ -33,21 +33,27 @@ GetOptions(
                 } );
 
 # initialize the logger or not
-if (defined $Options{d}) {
-    #                           Hier anpassen, wenn gewünscht!
-    #                                   vvvvvvvv
-    Log::Log4perl->init($Options{d} ||
-            "/home/moses/Perl/Myrtscht/log.conf");
-    # Because CUPS is one base of this program I don't use the portable
-    # variant with File::Spec.
-    INFO "Initialized.";
-
-    # little debbugging help
-    for my $option (keys %Options) {
-        DEBUG "Set option $option to $Options{$option}." # my favourite
-            if defined $Options{$option};                # part
-    }
-}
+#if (defined $Options{d}) {
+#    #                           Hier anpassen, wenn gewünscht!
+#    #                                   vvvvvvvv
+#    Log::Log4perl->init($Options{d} ||
+#            "/home/moses/Perl/Myrtscht/log.conf");
+#    # Because CUPS is one base of this program I don't use the portable
+#    # variant with File::Spec.
+#    INFO "Initialized.";
+#
+#    # little debbugging help
+#    for my $option (keys %Options) {
+#        DEBUG "Set option $option to $Options{$option}." # my favourite
+#            if defined $Options{$option};                # part
+#    }
+#}
+print "huhu: $TRACE\n";
+Log::Log4perl->easy_init( {
+    level  => $INFO,
+#    file   => '>>bla.log',
+    layout => '%d: [%L] %m %n',
+    } );
 
 # invoke the subroutines corresponding to the options
 {
@@ -270,8 +276,9 @@ ist der Tisch, an dem das Spiel stattfindet. Die "ID" wird aus den
 Namen des Gruppenverzeichnisses (die ersten zwei Ziffern) und der
 Spieldatei (die letzten zwei oder drei Ziffern) gebildet. So kann man
 leicht die Spieldatei, die zu dem jeweiligen Spielzettel gehört,
-herausfinden.  (Siehe auch Beispiel weiter unten.) Dann kommen
-die Namen der Gegner und in den Platz darunter kann der
+herausfinden.  (Siehe auch
+C<Games::Tournament::Myrtscht::TutDe>.) Dann kommen die
+Namen der Gegner und in den Platz darunter kann der
 Schiedsrichter die Ergebnisse eines Spiels schreiben. Die Höhe
 dieses Platzes variiert mit der Anzahl der Gewinnsätze.
 
@@ -296,173 +303,22 @@ dar.
       4. | Gaius Bonus           |  0 : 3  |   0 : 6   |  -6  |   17 : 66   |  -49
 
 
-=head1 EIN GROSSES BEISPIEL oder TUTORIUM (wie's beliebt)
-
-Da all diese Sachen oben sehr theoretisch bzw. schwer verständlich
-sind, werde ich hier noch ein großes Beispiel vom Ablauf der Dinge
-während eines Turniers geben. Dieser Teil kann auch als Tutorium
-angesehen werden, das die Gewöhnung an B<myrtscht> einfacher macht.
-
-Um also anzufangen: Wir stellen uns vor, wir seien die Organisatoren
-eines jährlich stattfindenden Tischtennisturniers und wir haben von
-B<myrtscht> gehört. Glücklichweise haben wir einen Computer,
-installieren jenes Programm und freuen uns erstmals auf das
-Ereignis, da es ja dank B<myrscht> nicht so kolossal anstrengend
-wird wie in den letzten Jahren. Unglücklicherweise ist die Person,
-die für die Werbung verantwortlich war, krank geworden und nun sind
-nur elf Leute da. Egal! Iulius Caesar ist da und wir wollen ihn
-nicht enttäuschen.
-
-Aber nun, fangen wir an, mit dem neuen Werkzeug zu arbeiten!
-
-Zuerst initialisieren wir das Turnier:
-
-    $ myrtscht -n Aremorica-Open-50vChr -g 2
-    $ cd Aremorica_Open-50vChr
-    $ ls
-    01.g  02.g
-
-An unserem Tisch haben sich vier Frauen und sieben Männer angemeldet,
-also machen wir zwei Gruppen aus ihnen. (Seht! Wir waren schon so
-voraussichtig, dass wir nur zwei Gruppendateien erstellt haben.)
-
-    $ vim 01.g          # natürlich benutzen wir vim(1)
-    $ cat 01.g
-    Name: Frauen
-    Tische: 1
-    Gutemine
-    Frau Automatix
-    Maestria
-    Jellosubmarine
-    $ vim 02.g
-    $ cat 02.g
-    Name: Männer
-    Tables: 2, 3
-    Asterix
-    Obelix
-    Gaius Iulius Caesar
-    Gaius Bonus
-    Teefax
-    Numerobis
-    Idefix
-
-Da wir den Drucker schon eingerichtet haben, können wir sofort damit
-beginnen, die Gruppenverzeichnisse einzurichten. Dass er nicht der
-Standarddrucker ist, ist das einzige Problem. Deswegen müssen wir den
-Drucker explizit angeben:
-
-    $ myrtscht -p *.g -P GS-Printfix-50BC
-    $ ls
-    01.d  02.d
-    $ ls *.d
-    01.d:
-    01.g  01.s  02.s  03.s  04.s  05.s  06.s    
-
-    02.d:
-    01.s  03.s  06.s  09.s  12.s  15.s  18.s  21.s
-    02.g  04.s  07.s  10.s  13.s  16.s  19.s
-    02.s  05.s  08.s  11.s  14.s  17.s  20.s
-
-Nun gibt es zwei Möglichkeiten: Entweder wir geben den Schiedsrichtern
-die ganzen Spielzettel, entspannen uns jetzt und haben nachher Stress,
-oder wir teilen die Spielzettel in die Teile, die zu den einzelnen
-Spielen gehören, entspannen uns nie wegen der kontinuierlich
-hereinkommenden Papierchen und haben nachher etwas weniger Aufregung.
-
-Was auch immer, wenn die Schiedsrichter die Spielzettel bekommen
-haben, kann der Spielbetrieb beginnen, sie können die Ergebnisse in
-einfacher Weise auf die Zettel schreiben und wir haben nur die
-Aufgabe, sie in den Computer einzutragen. Ich empfehle dies in vim(1)
-und mit Tabs zu tun:
-
-    $ vim -p 01.d/*.s
-    $ cat 01.d/*.s
-    Maestria | Jellosubmarine
-    8   11
-    12  10
-    9   11
-    Gutemine | Frau Automatix
-    11  4
-    11  8
-    Maestria | Gutemine
-    4   11
-    3   11
-    Jellosubmarine | Frau Automatix
-    14  16
-    12  10
-    18  20
-    Maestria | Frau Automatix
-    3   11
-    8   11
-    Gutemine | Jellosubmarine
-    11  7
-    5   11
-    9   11
-    $ vim -p 02.d/*.s
-    # Ich lasse das "cat" hier aus. Es bräuchte zu viel Platz.
-
-=head3 Bemerkung:
-
-Dank der ID auf den Spielzetteln ist es relativ einfach, die
-zugehörige Spieldatei herauszufinden. Die ersten zwei Stellen sind mit
-der Nummer des Gruppenverzeichnisses, die letzten zwei oder drei mit
-der Nummer der Spieldatei gleichbedeutend.
-
-=head4 Beispiel:
-
-       02.d
-        /\
-    ID: 0203   ==> vim 02.d/03.s
-          \/
-         03.s
-
-Sobald wir das getan haben, sind wir natürlich gespannt auf die
-Ergebnisse:
-
-    $ myrtscht -a 01.d
-    $ cat 01.d/Platzierungen
-    Rang | Name                  | Spiele  |   Sätze   |  SD  |    Bälle    |  BD
-    -----+-----------------------+---------+-----------+------+-------------+------
-      1. | Gutemine              |  2 : 1  |   5 : 2   |  3   |   69 : 48   |  21
-      2. | Jellosubmarine        |  2 : 1  |   5 : 4   |  1   |  105 : 100  |   5
-      3. | Frau Automatix        |  2 : 1  |   4 : 3   |  1   |   80 : 77   |   3
-      4. | Maestria              |  0 : 3  |   1 : 6   |  -5  |   47 : 76   |  -29
-    $ cd 02.d
-    $ myrtscht -a *.s
-    $ cat Platzierungen
-    Rang | Name                  | Spiele  |   Sätze   |  SD  |    Bälle    |  BD
-    -----+-----------------------+---------+-----------+------+-------------+------
-      1. | Teefax                |  6 : 0  |  12 : 0   |  12  |  140 : 104  |  36
-      2. | Asterix               |  5 : 1  |  10 : 3   |  7   |  148 : 105  |  43
-      3. | Numerobis             |  4 : 2  |   8 : 5   |  3   |  134 : 108  |  26
-      4. | Gaius Iulius Caesar   |  3 : 3  |   7 : 7   |  0   |  134 : 116  |  18
-      5. | Obelix                |  2 : 4  |   5 : 9   |  -4  |  123 : 150  |  -27
-      6. | Idefix                |  1 : 5  |   4 : 10  |  -6  |  118 : 134  |  -16
-      7. | Gaius Bonus           |  0 : 6  |   0 : 12  | -12  |   52 : 132  |  -80
-    
-
-Sehr gut! Das Turnier ist zu Ende. - Lasst uns den Computer
-ausschalten und ein wenig feiern.
-
-    $ su -c 'shutdown -h now'
-
-
 
 =head1 BEMERKUNGEN
 
 =over
 
-=item -
+=item *
 
 B<myrtscht> passt nicht auf, ob die Eingabedaten sinnvoll, gültig und
 regelgerecht sind.
 
-=item -
+=item *
 
 B<myrtscht> passt nicht auf, ob die angegebenen Kommandozeilenoptionen
 sinnvoll sind.
 
-=item -
+=item *
 
 Es ist notwendig, dass der Ausdruck 67 Zeilen je Blatt hat. In
 späteren Versionen, wenn B<myrtscht> Konfigurationsdateien benutzt
@@ -471,21 +327,21 @@ Anzahlen möglich sein. Zur Zeit können Sie natürlich den Quellcode an
 Ihre Bedürfnisse anpassen oder einen Patch schreiben, der das Problem
 ganz umgeht. - Ich nehme Ihre Vorschläge gern an.
 
-=item -
+=item *
 
 Sollte es irgendwelche Fehler in meiner Rechtschreibung oder Grammatik
 geben - bitte entschuldigen Sie und schreiben Sie mir! Bei Fehlern, die
 ich nicht korrigiere, weicht meine Hausorthographie von der
 allgemeingültigen deutschen Rechtschreibung ab.
 
-=item -
+=item *
 
 Wenn irgendjemand meine Art der Dokumentation nicht mag - bitte
 schreiben Sie mir!
 
-=item -
+=item *
 
-Mein Name wir mit "o Umlaut" geschrieben, aber perldoc(1) mag die
+Mein Name wird mit "o Umlaut" geschrieben, aber perldoc(1) mag die
 korrekte Schreibung nicht - genauso wie die all der anderen deutschen
 Wörter, die mit Umlauten oder scharfem S geschrieben werden. Wenn Sie
 die korrekte Schreibung sehen wollen, benutzen Sie bitte
@@ -523,13 +379,37 @@ Hoffnung auf einen richtigen Bugtracker.
 
 =head1 SIEHE AUCH
 
-L<Games::Tournament::RoundRobin>, L<Log::Log4perl>
+=over 4
+
+=item L<Games::Tournament::Myrtscht::TutDe>
+
+Das Tutorium auf Deutsch.
+
+=item L<Games::Tournament::Myrtscht::TutEn>
+
+Das Tutorium auf Englisch.
+
+=item L<Games::Tournament::TableTennis>
+
+Das zugrundeliegende Modul.
+
+=item L<Games::Tournament::RoundRobin>
+
+Das dem Modul zugrundeliegende Modul.
+
+=back
 
 Wenn ich etwas Zeit finde (vielleicht im Sommer), wird es auch eine
 Website über dieses Programm (und andere Sachen) geben. Aber die
-aktuelle Version ist immer auf
-L<www.myrtscht.de|http://www.myrtscht.de> verfügbar (auf Deutsch und
-Englisch).
+aktuelle Informationen sind immer auf
+L<www.myrtscht.de|http://www.myrtscht.de> verfügbar.
+
+Die aktuelle Entwicklerversion der Distribution (als git-Repository)
+kann per
+
+    $ git clone git://git.tuxfamily.org/gitroot/myrtsch/progrel.git
+
+heruntergeladen werden.
 
 
 

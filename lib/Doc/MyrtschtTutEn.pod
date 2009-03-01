@@ -1,0 +1,198 @@
+=encoding utf8
+
+=head1 NAME
+
+Games::Tournament::Myrtscht::TutDe - A tutorial to B<myrtscht>
+
+
+=head1 VERSION
+
+Version 0.01
+
+
+=head1 DESCRIPTION
+
+Since all the stuff in the embedded documentation of B<myrtscht> is
+very theoretical, I will give a big example of the order of events in
+a tournament.  You can see this part also as a tutorial which makes
+getting used to B<myrtscht> easy.
+
+
+=head1 A BIG EXAMPLE or TUTORIAL (as you like it)
+
+So let us start: Imagine, we are the organizers of a yearly table
+tennis tournament and we have heard of B<myrtscht>.  Luckily we have a
+computer, we install the program and look forward to the event first
+time, as it will not become such tremendous arduous like the last
+years because of having B<myrtscht>.  Unfortunately the person
+responsible for advertising has become ill and now there are just
+eleven persons to play.  Whatever! Iulius Caesar is here and we do not
+want to disappoint him.
+
+But now let's begin working with our new tool!
+
+First we init the tournament:
+
+    $ myrtscht -n Aremorican_Open-50BC -g 2
+    $ cd Aremorican_Open-50BC
+    $ ls
+    01.g  02.g
+
+There have four women and seven men registered at our table, so we
+make two groups out of them.  (See! We were such foresighted, that we
+have created just two group files.)
+
+    $ vim 01.g          # of course we use vim(1)
+    $ cat 01.g
+    Name: Women
+    Tables: 1
+    Impedimenta
+    Mrs Fulliautomatix
+    Bravura
+    Bacteria
+    $ vim 02.g
+    $ cat 02.g
+    Name: Men
+    Tables: 2, 3
+    Asterix
+    Obelix
+    Gaius Iulius Caesar
+    Gaius Bonus
+    Anticlimax
+    Edifis
+    Dogmatix
+
+We have already set up our printer, so we can start creating the group
+directories immediately.  The only thing is that it is not the
+standard.  So we have to define it explicitely:
+
+    $ myrtscht -p *.g -P GS-Printfix-50BC
+    $ ls
+    01.d  02.d
+    $ ls *.d
+    01.d:
+    01.g  01.s  02.s  03.s  04.s  05.s  06.s    
+
+    02.d:
+    01.s  03.s  06.s  09.s  12.s  15.s  18.s  21.s
+    02.g  04.s  07.s  10.s  13.s  16.s  19.s
+    02.s  05.s  08.s  11.s  14.s  17.s  20.s
+
+Now we have two possibilities: Either we give the whole gamesheets to
+the referees, relax now and have some hurry later, or we cut the
+gamesheets into the parts belonging to just one game, relax never
+because of continuous getting of little slips and have not so much hurry
+afterwards.
+
+Whatever, when the referees have got the gamesheets the playing can
+start, they can write the results on the paper easily and we have
+just the job to write it into the computer.  I recommend doing this in
+vim(1) and with tabs:
+
+    $ vim -p 01.d/*.s
+    $ cat 01.d/*.s
+    Impedimenta | Mrs Fulliautomatix
+    11  4
+    11  8
+    Bacteria | Bravura
+    11  8
+    10  12
+    11  9
+    Impedimenta | Bravura
+    11  4
+    11  3
+    Bacteria | Mrs Fulliautomatix
+    14  16
+    12  10
+    18  20
+    Impedimenta | Bacteria
+    11  7
+    5   11
+    9   11
+    Bravura | Mrs Fulliautomatix
+    3   11
+    8   11
+    $ vim -p 02.d/*.s
+    # I leave the "cat" out here. It needs too much space and food with
+    # two of them.
+
+=head3 Note:
+
+Thanks to the ID on the game sheets it is very easy to discover the
+related game file.  The first two digits are synonymous with the
+number of the group directory, the last two to three with the number
+of the game file.
+
+=head4 Example:
+
+        04.s
+         /\
+   ID: 0304   ==> vim 03.d/04.s
+       \/
+      03.d
+
+As soon as we have done this, we are very anxious to know the results:
+
+    $ myrtscht -a 01.d
+    $ cat 01.d/ranking
+    Rank | Name                  |  Games  |   Sets    |  SD  |    Balls    |  BD
+    -----+-----------------------+---------+-----------+------+-------------+------
+      1. | Impedimenta           |  2 : 1  |   5 : 2   |  3   |   69 : 48   |  21
+      2. | Bacteria              |  2 : 1  |   5 : 4   |  1   |  105 : 100  |   5
+      3. | Mrs Fulliautomatix    |  2 : 1  |   4 : 3   |  1   |   80 : 77   |   3
+      4. | Bravura               |  0 : 3  |   1 : 6   |  -5  |   47 : 76   |  -29
+    $ cd 02.d
+    $ myrtscht -a *.s
+    $ cat ranking
+    Rank | Name                  |  Games  |   Sets    |  SD  |    Balls    |  BD
+    -----+-----------------------+---------+-----------+------+-------------+------
+      1. | Anticlimax            |  6 : 0  |  12 : 0   |  12  |  140 : 104  |  36
+      2. | Asterix               |  5 : 1  |  10 : 3   |  7   |  148 : 105  |  43
+      3. | Edifis                |  4 : 2  |   8 : 5   |  3   |  134 : 108  |  26
+      4. | Gaius Iulius Caesar   |  3 : 3  |   7 : 7   |  0   |  134 : 116  |  18
+      5. | Obelix                |  2 : 4  |   5 : 9   |  -4  |  123 : 150  |  -27
+      6. | Dogmatix              |  1 : 5  |   4 : 10  |  -6  |  118 : 134  |  -16
+      7. | Gaius Bonus           |  0 : 6  |   0 : 12  | -12  |   52 : 132  |  -80
+
+Very good!  The tournament is over.---Let's turn the computer off and
+celebrate a bit!
+
+    $ su -c 'shutdown -h now'
+
+
+=head1 NOTE
+
+My name is written with "o umlaut", but perldoc(1) doesn't like the
+correct spelling.  If you want to see the correct spelling use
+S<C<pod2man --utf8 myrtscht | nroff -Tlatin1 -man | less>> instead of
+running perldoc!
+
+
+=head1 SEE ALSO
+
+=item B<myrtscht>
+
+The program itself.
+
+=item L<Games::Tournament::TableTennis>
+
+The module on which the program is based.
+
+=item L<Games::Tournament::Myrtscht::TutEn>
+
+The English tutorial.
+
+
+=head1 AUTHOR
+
+Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2008 by Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+
+This program is free software.  You may copy or redistribute it under
+the same terms as Perl itself.
+
+=cut
