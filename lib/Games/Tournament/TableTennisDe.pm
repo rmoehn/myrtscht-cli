@@ -1,13 +1,6 @@
 package Games::Tournament::TableTennisDe;
-our @EXPORT = qw(
-        create_new_tournament
-        process_group_files
-        preprocess_game_files
-        );
-use Exporter;
-our @ISA = qw( Exporter );
-our $VERSION = '0.1a';
 
+use 5.008000;
 use strict;
 use warnings;
 use Log::Log4perl qw( :easy );
@@ -15,6 +8,24 @@ use Cwd;
 use Games::Tournament::RoundRobin;
 use Net::CUPS;
 use Net::CUPS::Destination;
+
+require Exporter;
+
+our @ISA = qw(Exporter);
+
+our %EXPORT_TAGS = ( 'all' => [ qw(
+        create_new_tournament
+        process_group_files
+        preprocess_game_files
+) ] );
+
+our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+
+our @EXPORT = qw(
+        create_new_tournament
+        process_group_files
+        preprocess_game_files
+);
 
 # the subroutine for creating new tournaments
 sub create_new_tournament {

@@ -3,11 +3,11 @@
 # all the nice modules
 use strict;
 use warnings;
-use Log::Log4perl qw/ :easy /;
-use Getopt::Long qw/ :config no_ignore_case bundling /;
+use Log::Log4perl qw( :easy );
+use Getopt::Long qw( :config no_ignore_case bundling );
 use Pod::Usage;
 use lib '/home/moses/Perl/Myrtscht/lib';
-use Games::Tournament::TableTennisDe;
+use Games::Tournament::TableTennisDe qw( :all );
 
 our $VERSION = '0.02';
 
@@ -60,13 +60,13 @@ if (defined $Options{d}) {
 my @arguments = (\%Options, \@ARGV);
 if (defined $Options{n}) {
     INFO "Invoking the subroutine creating a new tournament.";
-    &create_new_tournament(@arguments);
+    create_new_tournament(@arguments);
 } elsif (defined $Options{p}) {
     INFO "Invoking the subroutine processing the group files.";
-    &process_group_files(@arguments);
+    process_group_files(@arguments);
 } elsif (defined $Options{a}) {
     INFO "Invoking the subroutine preprocessing the game files.";
-    &preprocess_game_files(@arguments);
+    preprocess_game_files(@arguments);
 } elsif (defined $Options{h}) {
     pod2usage( { -exitval => 1,
                  -verbose => 2,
@@ -190,7 +190,7 @@ B<myrtscht> arbeitet.
 =head2 Die Gruppendateien F<*.g>
 
 Dies sind die Dateien, die man als erstes zu Gesicht bekommt, wenn man
-ein Turnier veranstaltet. Ihr Format (vor dem Bearbeiten) ist:
+ein Turnier initialisiert. Ihr Format (vor dem Bearbeiten) ist:
 
     Name:
     Tische:
@@ -277,7 +277,8 @@ Namen des Gruppenverzeichnisses (die ersten zwei Ziffern) und der
 Spieldatei (die letzten zwei oder drei Ziffern) gebildet. So kann man
 leicht die Spieldatei, die zu dem jeweiligen Spielzettel gehört,
 herausfinden.  (Siehe auch
-L<Games::Tournament::Myrtscht::TutDe|Games::Tournament::Myrtscht::TutDe> .) Dann kommen die Namen der Gegner und in den Platz
+L<Games::Tournament::Myrtscht::TutDe|Games::Tournament::Myrtscht::TutDe>.)
+Dann kommen die Namen der Gegner und in den Platz
 darunter kann der Schiedsrichter die Ergebnisse eines Spiels
 schreiben. Die Höhe dieses Platzes variiert mit der Anzahl der
 Gewinnsätze.

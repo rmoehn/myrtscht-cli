@@ -30,12 +30,19 @@ GetOptions(
 
 # initialize the logger or not
 if (defined $Options{d}) {
-    #                           Adjust here, if needed!
-    #                                   vvvvvvvv
-    Log::Log4perl->init($Options{d} || "log.conf");
-    # Because CUPS is one base of this program I don't use the portable
-    # variant with File::Spec.
-    INFO "Initialized.";
+    my %loglevels = (
+            1 => 5000,
+            2 => 10000,
+            3 => 20000,
+            4 => 30000,
+            5 => 40000,
+            6 => 50000,
+            );
+
+    Log::Log4perl->easy_init( {
+        level  => $loglevels{$Options{d} || 1},
+        layout => '%d: [%L] %m %n',
+        } );
 
     # little debbugging help
     for my $option (keys %Options) {
@@ -49,13 +56,13 @@ if (defined $Options{d}) {
 my @arguments = (\%Options, \@ARGV);
 if (defined $Options{n}) {
     INFO "Invoking the subroutine creating a new tournament.";
-    &create_new_tournament(@arguments);
+    create_new_tournament(@arguments);
 } elsif (defined $Options{p}) {
     INFO "Invoking the subroutine processing the group files.";
-    &process_group_files(@arguments);
+    process_group_files(@arguments);
 } elsif (defined $Options{a}) {
     INFO "Invoking the subroutine preprocessing the game files.";
-    &preprocess_game_files(@arguments);
+    preprocess_game_files(@arguments);
 } elsif (defined $Options{h}) {
     pod2usage( { -exitval => 1,
                  -verbose => 2,
@@ -531,7 +538,7 @@ subordinated directories when working with B<myrtscht>.
 
 =head2 The Group Files F<*.g>
 
-These are the files you are going to see first when running a
+These are the files you are going to see first when initialising a
 tournament.  Their format (before editing) is:
 
     Name:
