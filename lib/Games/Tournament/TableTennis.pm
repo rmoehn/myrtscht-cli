@@ -390,53 +390,81 @@ $players{$player}{ball_difference} || 0
 }
 
 1;
+
 __END__
-# Below is stub documentation for your module. You'd better edit it!
+
+=encoding utf8
 
 =head1 NAME
 
-Games::Tournament::TableTennis - Perl extension for blah blah blah
+Games::Tournament::TableTennis - Perl extension for managing round robins
 
 =head1 SYNOPSIS
 
   use Games::Tournament::TableTennis;
-  blah blah blah
+  # and do something useful with it
 
 =head1 DESCRIPTION
 
-Stub documentation for Games::Tournament::TableTennis, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+This module has currently no real common use. It is currently just
+used to bring the main functions out of B<myrtscht|myrtscht>, the
+actually most important part of this distribution, and thus make it
+lighter. Hence I haven't documented this module yet. But I will do
+this in the next time and in the time after the next time I will be
+working on more commonly useful functions of
+L<Games::Tournament::TableTennis|Games::Tournament::TableTennis>.
 
-Blah blah blah.
 
-=head2 EXPORT
+=head1 NOTE
 
-None by default.
-
+Since this module is not yet designed for common use I do not
+recommend to used it yourself if you do not know exactly what you do.
+Rather look on L<myrtscht|myrtscht> (also included in this
+distribution) and visit
+L<Games::Tournament::TableTennis|Games::Tournament::TableTennis from
+time to time.
 
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+=over 4
 
-If you have a mailing list set up for your module, mention it here.
+=item * L<myrtscht>
 
-If you have a web site set up for your module, mention it here.
+The frontend program to this module.
+
+=item * L<Games::Tournament::MyrtschtTutEn>
+
+A tutorial to myrtscht.
+
+=item * L<www.myrtscht.de|http://www.myrtscht.de>
+
+A website concerning this program. Not really mature yet.
+
+=item * L<git://git.tuxfamily.org/gitroot/myrtscht/progrel.git>
+
+The git repository with the current state of development. Use it by
+typing
+
+    git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
+
+But beware: It is NOT stable.
+
+=item * L<Games::Tournament::RoundRobin>
+
+A module which was very useful creating this module.
+
 
 =head1 AUTHOR
 
-Richard Möhn, E<lt>moses@E<gt>
+Richard Möhn, E<lt>myrtscht@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2009 by Richard Möhn
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.0 or,
+it under the same terms as Perl itself, either Perl version 5.8.0 or,
 at your option, any later version of Perl 5 you may have available.
 
 

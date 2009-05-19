@@ -178,14 +178,27 @@ The program itself.
 
 The module on which the program is based.
 
-=item L<Games::Tournament::Myrtscht::TutEn>
+=item * L<www.myrtscht.de|http://www.myrtscht.de>
 
-The English tutorial.
+A website concerning this program. Not really mature yet.
+
+=item * L<git://git.tuxfamily.org/gitroot/myrtscht/progrel.git>
+
+The git repository with the current state of development. Use it by
+typing
+
+    git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
+
+But beware: It is NOT stable.
+
+#=item L<Games::Tournament::MyrtschtTutDe>
+#
+#The German tutorial.
 
 
 =head1 AUTHOR
 
-Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+Richard Möhn E<lt>myrtscht@cpan.orgE<gt>
 
 
 =head1 COPYRIGHT AND LICENSE

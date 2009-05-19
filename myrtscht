@@ -291,33 +291,33 @@ sets balls respectively.
 
 =over
 
-=item -
+=item *
 
 B<myrtscht> will not check if the input data are valid and go along with
 the rules of the game.
 
-=item -
+=item *
 
 B<myrtscht> will not check if the given command line options are
 senseful.
 
-=item -
+=item *
 
 It is required to have a printout with 67 lines per page.  In later
 version, when B<myrtscht> makes use of configuration files, there will
 be easy support for other numbers.  Now you can change the code, too,
 though.---That should not be such difficult.
 
-=item -
+=item *
 
 If there are some mistakes in my grammar or spelling---please excuse and
 write me!
 
-=item -
+=item *
 
 If anybody does not my like my way to document---please write me.
 
-=item -
+=item *
 
 My name is written with "o umlaut", but perldoc(1) doesn't like the
 correct spelling.  If you want to see the correct spelling use
@@ -335,26 +335,36 @@ crazy, because the umlauts are counted like two but printed like one
 char.---I think, this is a common problem, but haven't found a
 solution.  Maybe anyone reading this will give me a hint.
 
-When finding some other bugs write to my e-mail address.  There will
-also be a website and I want to upload this program to
-L<GNU Savannah|http://savannah.nongnu.org>.  So there is hope for a real
-bug tracker.
-
-
 
 =head1 SEE ALSO
 
-L<Games::Tournament::RoundRobin>, L<Log::Log4perl>
+=over 4
 
-There will also be a web site when I find time for it (maybe in summer).
-But the current version is always available from
-L<www.myrtscht.de|http://www.myrtscht.de> (in German and in English).
+=item * L<Games::Tournament::TableTennis>
 
+The module on which this program is based.
+
+=item * L<Games::Tournament::MyrtschtTutEn>
+
+A tutorial to this program.
+
+=item * L<www.myrtscht.de|http://www.myrtscht.de>
+
+A website concerning this program. Not really mature yet.
+
+=item * L<git://git.tuxfamily.org/gitroot/myrtscht/progrel.git>
+
+The git repository with the current state of development. Use it by
+typing
+
+    git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
+
+But beware: It is NOT stable.
 
 
 =head1 AUTHOR
 
-Richard Möhn E<lt>richard.moehn@gmx.deE<gt>
+Richard Möhn E<lt>myrscht@cpan.orgE<gt>
 
 
 
