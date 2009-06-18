@@ -9,7 +9,7 @@ use Pod::Usage;
 use lib '/home/moses/Perl/Myrtscht/lib';
 use Games::Tournament::TableTennis qw( :all );
 
-our $VERSION = '0.03';
+our $VERSION = '0.02';
 
 # set up all the nice options
 pod2usage(2) unless @ARGV;  # no options are no good
@@ -38,7 +38,7 @@ if (defined $Options{d}) {
             );
 
     Log::Log4perl->easy_init( {
-        level  => $loglevels{$Options{d} || 3},
+        level  => $loglevels{$Options{d} || 1},
         layout => '%d: [%L] %m %n',
         } );
 
@@ -54,7 +54,7 @@ if (defined $Options{d}) {
 my @arguments = (\%Options, \@ARGV);
 if (defined $Options{n}) {
     INFO "Invoking the subroutine creating a new tournament.";
-    create_new_tournament(\%Options);
+    create_new_tournament(@arguments);
 } elsif (defined $Options{p}) {
     INFO "Invoking the subroutine processing the group files.";
     process_group_files(@arguments);
@@ -82,11 +82,11 @@ myrtscht - My Round robin Tournament SCHeduling for Table tennis
 
 =head1 SYNOPSIS
 
-myrtscht B<-n> [I<name>] [B<-g> I<number>] [B<-d> [I<level>]]
+myrtscht B<-n> [I<name>] [B<-g> I<number>] [B<-d> [I<file>]]
 
-myrtscht B<-p> I<files> [B<-r> I<rounds>] [B<-s>] [B<-P> I<printer>] [B<-d> [I<level>]]
+myrtscht B<-p> I<files> [B<-r> I<rounds>] [B<-s>] [B<-P> I<printer>] [B<-d> [I<file>]]
 
-myrtscht B<-a> I<files>/I<directory> [B<-d> [I<level>]]
+myrtscht B<-a> I<files>/I<directory> [B<-d> [I<file>]]
 
 myrtscht B<--help>
 
@@ -150,9 +150,8 @@ Computes a ranking file from the given group I<files> or I<directory>.
 =item B<-d> [I<file>]
 
 Switches to debugging mode.  The log is created by using the
-L<Log::Log4perl(3)|Log::Log4perl> module.  You can specify a log level
-from 1 (very sensitivy) to 6 (nearly no output).  The default is 3
-(quite entertaining and senseful information).
+L<Log::Log4perl(3)|Log::Log4perl> module.  You can specify a config 
+I<file> to modify the output.
 
 =item B<-h> or B<--help>
 

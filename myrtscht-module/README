@@ -1,0 +1,41 @@
+myrtscht version 0.02 - README
+==============================
+
+myrtscht is a tool to manage round robins. But I think, one can also
+use it for other games if they do not allow standoffs.
+
+myrtscht is completely command line oriented, but (as I think) easy to
+use. Maybe I will provide a GUI, but don't rely on that or wait a long
+time.
+
+As you can see, the version number is not really high yet, but I
+think, myrtscht is already usable. In the next time the development
+will concentrate more on things, that are not user-seeable. Thus
+operating will not change significantly.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+    Log::Log4perl
+
+    Net::CUPS
+
+    Games::Tournament::RoundRobin
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2009 by Richard Möhn
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.0 or,
+at your option, any later version of Perl 5 you may have available.

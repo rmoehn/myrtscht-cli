@@ -1,0 +1,13 @@
+Revision history for Perl extension myrtscht
+
+0.01  Sat Feb 14 18:12:34 2009
+	- original version; myrtscht as a big program
+
+0.02  Sat May 23 15:24:23 2009
+    - changed the structure of the distribution
+        - now a little program with myrtscht's main functions in a
+          module
+
+0.03  Sat May 23 15:52:23 2009
+    - little cosmetical correction concerning the module
+    - little change in the logging of myrtscht

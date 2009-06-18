@@ -1,6 +1,0 @@
-Revision history for Perl extension Games::Tournament::TableTennis.
-
-0.01  Sat Feb 14 18:12:34 2009
-	- original version; created by h2xs 1.23 with options
-		-b 5.8.0 -XAn Games::Tournament::TableTennis
-

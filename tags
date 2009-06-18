@@ -1,0 +1,281 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.7	//
+Adrenne	Tests/Testresults/Betatest/02.d/09.s	/^Adrenne Eisold | Ina Bieske$/;"	l
+Adrenne	Tests/Testresults/Betatest/02.d/14.s	/^Adrenne Eisold | Andrea Heschel$/;"	l
+Adrenne	Tests/Testresults/Betatest/02.d/17.s	/^Adrenne Eisold | Helga Fischer$/;"	l
+Adrenne	Tests/Testresults/Betatest/02.d/20.s	/^Adrenne Eisold | Gerlind Buchta$/;"	l
+Andrea	Tests/Testresults/Betatest/02.d/12.s	/^Andrea Heschel | Ina Bieske$/;"	l
+Andreas	Tests/Testresults/Betatest/01.d/01.s	/^Andreas Remus | Gabriel Krebs$/;"	l
+Andreas	Tests/Testresults/Betatest/01.d/04.s	/^Andreas Remus | Horst Lange$/;"	l
+Andreas	Tests/Testresults/Betatest/01.d/07.s	/^Andreas Remus | Wolfgang Zimmermann$/;"	l
+Andreas	Tests/Testresults/Betatest/01.d/10.s	/^Andreas Remus | Werner Mamitzsch$/;"	l
+Andreas	Tests/Testresults/Betatest/01.d/13.s	/^Andreas Remus | Dieter Kühn$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/02.s	/^Anticlimax | Edifis$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/08.s	/^Anticlimax | Gaius Iulius Caesar$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/10.s	/^Anticlimax | Asterix$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/14.s	/^Anticlimax | Dogmatix$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/17.s	/^Anticlimax | Obelix$/;"	l
+Anticlimax	Aremorican_Open-50BC/02.d/19.s	/^Anticlimax | Gaius Bonus$/;"	l
+Asterix	Aremorica-Open-50vChr/02.d/01.s	/^Asterix | Obelix$/;"	l
+Asterix	Aremorica-Open-50vChr/02.d/04.s	/^Asterix | Gaius Iulius Caesar$/;"	l
+Asterix	Aremorica-Open-50vChr/02.d/07.s	/^Asterix | Gaius Bonus$/;"	l
+Asterix	Aremorica-Open-50vChr/02.d/13.s	/^Asterix | Numerobis$/;"	l
+Asterix	Aremorica-Open-50vChr/02.d/16.s	/^Asterix | Idefix$/;"	l
+Asterix	Aremorica-Open-50vChr/03.d/01.s	/^Asterix | Obelix$/;"	l
+Asterix	Aremorica-Open-50vChr/03.d/03.s	/^Asterix | Gaius Iulius Caesar$/;"	l
+Asterix	Aremorica-Open-50vChr/03.d/05.s	/^Asterix | Gaius Bonus$/;"	l
+Asterix	Aremorican_Open-50BC/02.d/01.s	/^Asterix | Obelix$/;"	l
+Asterix	Aremorican_Open-50BC/02.d/04.s	/^Asterix | Gaius Iulius Caesar$/;"	l
+Asterix	Aremorican_Open-50BC/02.d/07.s	/^Asterix | Gaius Bonus$/;"	l
+Asterix	Aremorican_Open-50BC/02.d/13.s	/^Asterix | Edifis$/;"	l
+Asterix	Aremorican_Open-50BC/02.d/16.s	/^Asterix | Dogmatix$/;"	l
+Asterix	Aremorican_Open-50BC/03.d/01.s	/^Asterix | Obelix$/;"	l
+Asterix	Aremorican_Open-50BC/03.d/03.s	/^Asterix | Gaius Iulius Caesar$/;"	l
+Asterix	Aremorican_Open-50BC/03.d/05.s	/^Asterix | Gaius Bonus$/;"	l
+Bacteria	Aremorican_Open-50BC/01.d/02.s	/^Bacteria | Bravura$/;"	l
+Bacteria	Aremorican_Open-50BC/01.d/04.s	/^Bacteria | Mrs Fulliautomatix$/;"	l
+Bernd	Tests/Testresults/Alphatest/02.d/06.s	/^Bernd Naumann | Jens Rölz$/;"	l
+Bernd	Tests/Testresults/Alphatest/02.d/20.s	/^Bernd Naumann | Stefan Lindner$/;"	l
+Bravura	Aremorican_Open-50BC/01.d/06.s	/^Bravura | Mrs Fulliautomatix$/;"	l
+Dieter	Tests/Testresults/Betatest/01.d/06.s	/^Dieter Kühn | Gabriel Krebs$/;"	l
+Dieter	Tests/Testresults/Betatest/01.d/08.s	/^Dieter Kühn | Werner Mamitzsch$/;"	l
+Dieter	Tests/Testresults/Betatest/01.d/12.s	/^Dieter Kühn | Horst Lange$/;"	l
+Dorothee	Tests/Testresults/Betatest/02.d/02.s	/^Dorothee Steger | Helga Fischer$/;"	l
+Dorothee	Tests/Testresults/Betatest/02.d/05.s	/^Dorothee Steger | Ina Bieske$/;"	l
+Dorothee	Tests/Testresults/Betatest/02.d/08.s	/^Dorothee Steger | Gerlind Buchta$/;"	l
+Dorothee	Tests/Testresults/Betatest/02.d/11.s	/^Dorothee Steger | Adrenne Eisold$/;"	l
+Dorothee	Tests/Testresults/Betatest/02.d/16.s	/^Dorothee Steger | Andrea Heschel$/;"	l
+Edifis	Aremorican_Open-50BC/02.d/06.s	/^Edifis | Dogmatix$/;"	l
+Edifis	Aremorican_Open-50BC/02.d/11.s	/^Edifis | Gaius Bonus$/;"	l
+Edifis	Aremorican_Open-50BC/02.d/21.s	/^Edifis | Gaius Iulius Caesar$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/01.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/01.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/01.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/02.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/02.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/02.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/03.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/03.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/03.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/04.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/04.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/04.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/05.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/05.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/05.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/06.d/04.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/06.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/06.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/10.d/05.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/10.d/09.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/10.d/10.d/05.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11032008/10.d/10.d/09.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Ein	Tests/Testresults/Tournament-11152008/01.d/02.s	/^Ein Fallslos | Einfall Slos$/;"	l
+Ein	Tests/Testresults/Tournament-11152008/01.d/07.s	/^Ein Fallslos | Hallo Horst$/;"	l
+Ein	Tests/Testresults/Tournament-11152008/01.d/13.s	/^Ein Fallslos | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/01.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/01.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/01.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/01.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/02.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/02.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/02.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/02.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/03.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/03.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/03.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/03.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/04.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/04.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/04.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/04.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/05.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/05.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/05.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/05.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/06.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/06.d/05.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/06.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/06.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/03.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/10.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/10.d/03.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/10.d/10.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11032008/10.d/10.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Einer	Tests/Testresults/Tournament-11152008/01.d/01.s	/^Einer Schaffts Immer | Ein Fallslos$/;"	l
+Einer	Tests/Testresults/Tournament-11152008/01.d/03.s	/^Einer Schaffts Immer | Higzquap Frosch$/;"	l
+Einer	Tests/Testresults/Tournament-11152008/01.d/10.s	/^Einer Schaffts Immer | Einfall Slos$/;"	l
+Einer	Tests/Testresults/Tournament-11152008/01.d/14.s	/^Einer Schaffts Immer | Hallo Horst$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/02.s	/^Frank Vogel | Jens Rölz$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/05.s	/^Frank Vogel | Kay-Uwe Müller$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/07.s	/^Frank Vogel | Stefan Lindner$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/14.s	/^Frank Vogel | Bernd Naumann$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/17.s	/^Frank Vogel | Robby Anders$/;"	l
+Frank	Tests/Testresults/Alphatest/02.d/19.s	/^Frank Vogel | Lutz Anders$/;"	l
+Gabriel	Tests/Testresults/Betatest/01.d/09.s	/^Gabriel Krebs | Horst Lange$/;"	l
+Gaius	Aremorica-Open-50vChr/02.d/03.s	/^Gaius Bonus | Idefix$/;"	l
+Gaius	Aremorica-Open-50vChr/02.d/12.s	/^Gaius Iulius Caesar | Idefix$/;"	l
+Gaius	Aremorica-Open-50vChr/02.d/18.s	/^Gaius Bonus | Gaius Iulius Caesar$/;"	l
+Gaius	Aremorica-Open-50vChr/03.d/02.s	/^Gaius Bonus | Gaius Iulius Caesar$/;"	l
+Gaius	Aremorican_Open-50BC/02.d/03.s	/^Gaius Bonus | Dogmatix$/;"	l
+Gaius	Aremorican_Open-50BC/02.d/12.s	/^Gaius Iulius Caesar | Dogmatix$/;"	l
+Gaius	Aremorican_Open-50BC/02.d/18.s	/^Gaius Bonus | Gaius Iulius Caesar$/;"	l
+Gaius	Aremorican_Open-50BC/03.d/02.s	/^Gaius Bonus | Gaius Iulius Caesar$/;"	l
+Games::Tournament::TableTennis	lib/Games/Tournament/TableTennis.pm	/^package Games::Tournament::TableTennis;$/;"	p
+Games::Tournament::TableTennis	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^package Games::Tournament::TableTennis;$/;"	p
+Games::Tournament::TableTennisDe	lib/Games/Tournament/TableTennisDe.pm	/^package Games::Tournament::TableTennisDe;$/;"	p
+Gerlind	Tests/Testresults/Betatest/02.d/03.s	/^Gerlind Buchta | Andrea Heschel$/;"	l
+Gerlind	Tests/Testresults/Betatest/02.d/06.s	/^Gerlind Buchta | Helga Fischer$/;"	l
+Gerlind	Tests/Testresults/Betatest/02.d/18.s	/^Gerlind Buchta | Ina Bieske$/;"	l
+Gutemine	Aremorica-Open-50vChr/01.d/02.s	/^Gutemine | Frau Automatix$/;"	l
+Gutemine	Aremorica-Open-50vChr/01.d/06.s	/^Gutemine | Jellosubmarine$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/01.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/02.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/03.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/04.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/05.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11032008/06.d/03.s	/^Hallo Horst | Einfall Slos$/;"	l
+Hallo	Tests/Testresults/Tournament-11152008/01.d/05.s	/^Hallo Horst | Einfall Slos$/;"	l
+Helga	Tests/Testresults/Betatest/02.d/15.s	/^Helga Fischer | Ina Bieske$/;"	l
+Helga	Tests/Testresults/Betatest/02.d/21.s	/^Helga Fischer | Andrea Heschel$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/01.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/01.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/02.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/02.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/03.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/03.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/04.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/04.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/05.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/05.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/06.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/06.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/10.d/08.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11032008/10.d/10.d/08.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Higzquap	Tests/Testresults/Tournament-11152008/01.d/09.s	/^Higzquap Frosch | Einfall Slos$/;"	l
+Higzquap	Tests/Testresults/Tournament-11152008/01.d/12.s	/^Higzquap Frosch | Hallo Horst$/;"	l
+Impedimenta	Aremorican_Open-50BC/01.d/01.s	/^Impedimenta | Mrs Fulliautomatix$/;"	l
+Impedimenta	Aremorican_Open-50BC/01.d/03.s	/^Impedimenta | Bravura$/;"	l
+Impedimenta	Aremorican_Open-50BC/01.d/05.s	/^Impedimenta | Bacteria$/;"	l
+Jellosubmarine	Aremorica-Open-50vChr/01.d/04.s	/^Jellosubmarine | Frau Automatix$/;"	l
+Jens	Tests/Testresults/Alphatest/02.d/15.s	/^Jens Rölz | Stefan Lindner$/;"	l
+Lutz	Tests/Testresults/Alphatest/02.d/01.s	/^Lutz Anders | Kay-Uwe Müller$/;"	l
+Lutz	Tests/Testresults/Alphatest/02.d/04.s	/^Lutz Anders | Stefan Lindner$/;"	l
+Lutz	Tests/Testresults/Alphatest/02.d/10.s	/^Lutz Anders | Bernd Naumann$/;"	l
+Lutz	Tests/Testresults/Alphatest/02.d/13.s	/^Lutz Anders | Robby Anders$/;"	l
+Lutz	Tests/Testresults/Alphatest/02.d/16.s	/^Lutz Anders | Jens Rölz$/;"	l
+Maestria	Aremorica-Open-50vChr/01.d/01.s	/^Maestria | Jellosubmarine$/;"	l
+Maestria	Aremorica-Open-50vChr/01.d/03.s	/^Maestria | Gutemine$/;"	l
+Maestria	Aremorica-Open-50vChr/01.d/05.s	/^Maestria | Frau Automatix$/;"	l
+Members	lib/Games/Tournament/TableTennis.pm	/^Members:$/;"	l
+Members	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^Members:$/;"	l
+Mitglieder	lib/Games/Tournament/TableTennisDe.pm	/^Mitglieder:$/;"	l
+Name	lib/Games/Tournament/TableTennis.pm	/^Name:$/;"	l
+Name	lib/Games/Tournament/TableTennisDe.pm	/^Name:$/;"	l
+Name	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^Name:$/;"	l
+Numerobis	Aremorica-Open-50vChr/02.d/06.s	/^Numerobis | Idefix$/;"	l
+Numerobis	Aremorica-Open-50vChr/02.d/11.s	/^Numerobis | Gaius Bonus$/;"	l
+Numerobis	Aremorica-Open-50vChr/02.d/21.s	/^Numerobis | Gaius Iulius Caesar$/;"	l
+Obelix	Aremorica-Open-50vChr/02.d/05.s	/^Obelix | Gaius Bonus$/;"	l
+Obelix	Aremorica-Open-50vChr/02.d/09.s	/^Obelix | Numerobis$/;"	l
+Obelix	Aremorica-Open-50vChr/02.d/15.s	/^Obelix | Gaius Iulius Caesar$/;"	l
+Obelix	Aremorica-Open-50vChr/02.d/20.s	/^Obelix | Idefix$/;"	l
+Obelix	Aremorica-Open-50vChr/03.d/04.s	/^Obelix | Gaius Bonus$/;"	l
+Obelix	Aremorica-Open-50vChr/03.d/06.s	/^Obelix | Gaius Iulius Caesar$/;"	l
+Obelix	Aremorican_Open-50BC/02.d/05.s	/^Obelix | Gaius Bonus$/;"	l
+Obelix	Aremorican_Open-50BC/02.d/09.s	/^Obelix | Edifis$/;"	l
+Obelix	Aremorican_Open-50BC/02.d/15.s	/^Obelix | Gaius Iulius Caesar$/;"	l
+Obelix	Aremorican_Open-50BC/02.d/20.s	/^Obelix | Dogmatix$/;"	l
+Obelix	Aremorican_Open-50BC/03.d/04.s	/^Obelix | Gaius Bonus$/;"	l
+Obelix	Aremorican_Open-50BC/03.d/06.s	/^Obelix | Gaius Iulius Caesar$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/01.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/01.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/01.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/01.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/01.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/02.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/02.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/02.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/02.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/02.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/03.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/03.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/03.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/03.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/03.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/04.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/04.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/04.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/04.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/04.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/05.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/05.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/05.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/05.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/05.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/06.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/06.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/06.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/06.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/06.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/04.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/06.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/07.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/10.d/02.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/10.d/04.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/10.d/06.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11032008/10.d/10.d/07.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11152008/01.d/04.s	/^Okrompotzol Ürg | Higzquap Frosch$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11152008/01.d/06.s	/^Okrompotzol Ürg | Hallo Horst$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11152008/01.d/08.s	/^Okrompotzol Ürg | Einer Schaffts Immer$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11152008/01.d/11.s	/^Okrompotzol Ürg | Ein Fallslos$/;"	l
+Okrompotzol	Tests/Testresults/Tournament-11152008/01.d/15.s	/^Okrompotzol Ürg | Einfall Slos$/;"	l
+Otottoto	Tests/Testresults/Betatest2/01.d/02.s	/^Otottoto Ottoot | Irko Amli$/;"	l
+RANKING	lib/Games/Tournament/TableTennis.pm	/^format RANKING =$/;"	f
+RANKING	lib/Games/Tournament/TableTennisDe.pm	/^format RANKING =$/;"	f
+RANKING	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^format RANKING =$/;"	f
+RANKING_TOP	lib/Games/Tournament/TableTennis.pm	/^format RANKING_TOP =$/;"	f
+RANKING_TOP	lib/Games/Tournament/TableTennisDe.pm	/^format RANKING_TOP =$/;"	f
+RANKING_TOP	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^format RANKING_TOP =$/;"	f
+Robby	Tests/Testresults/Alphatest/02.d/03.s	/^Robby Anders | Stefan Lindner$/;"	l
+Robby	Tests/Testresults/Alphatest/02.d/08.s	/^Robby Anders | Bernd Naumann$/;"	l
+Robby	Tests/Testresults/Alphatest/02.d/11.s	/^Robby Anders | Jens Rölz$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/01.s	/^Sara Fischer | Adrenne Eisold$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/04.s	/^Sara Fischer | Andrea Heschel$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/07.s	/^Sara Fischer | Helga Fischer$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/10.s	/^Sara Fischer | Gerlind Buchta$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/13.s	/^Sara Fischer | Dorothee Steger$/;"	l
+Sara	Tests/Testresults/Betatest/02.d/19.s	/^Sara Fischer | Ina Bieske$/;"	l
+Tables	lib/Games/Tournament/TableTennis.pm	/^Tables:$/;"	l
+Tables	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^Tables:$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/02.s	/^Teefax | Numerobis$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/08.s	/^Teefax | Gaius Iulius Caesar$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/10.s	/^Teefax | Asterix$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/14.s	/^Teefax | Idefix$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/17.s	/^Teefax | Obelix$/;"	l
+Teefax	Aremorica-Open-50vChr/02.d/19.s	/^Teefax | Gaius Bonus$/;"	l
+Tische	lib/Games/Tournament/TableTennisDe.pm	/^Tische:$/;"	l
+Werner	Tests/Testresults/Betatest/01.d/03.s	/^Werner Mamitzsch | Horst Lange$/;"	l
+Werner	Tests/Testresults/Betatest/01.d/15.s	/^Werner Mamitzsch | Gabriel Krebs$/;"	l
+Wolfgang	Tests/Testresults/Betatest/01.d/02.s	/^Wolfgang Zimmermann | Dieter Kühn$/;"	l
+Wolfgang	Tests/Testresults/Betatest/01.d/05.s	/^Wolfgang Zimmermann | Werner Mamitzsch$/;"	l
+Wolfgang	Tests/Testresults/Betatest/01.d/11.s	/^Wolfgang Zimmermann | Gabriel Krebs$/;"	l
+Wolfgang	Tests/Testresults/Betatest/01.d/14.s	/^Wolfgang Zimmermann | Horst Lange$/;"	l
+create_new_tournament	lib/Games/Tournament/TableTennis.pm	/^sub create_new_tournament {$/;"	s
+create_new_tournament	lib/Games/Tournament/TableTennisDe.pm	/^sub create_new_tournament {$/;"	s
+create_new_tournament	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^sub create_new_tournament {$/;"	s
+preprocess_game_files	lib/Games/Tournament/TableTennis.pm	/^sub preprocess_game_files {$/;"	s
+preprocess_game_files	lib/Games/Tournament/TableTennisDe.pm	/^sub preprocess_game_files {$/;"	s
+preprocess_game_files	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^sub preprocess_game_files {$/;"	s
+process_game_files	lib/Games/Tournament/TableTennis.pm	/^sub process_game_files {$/;"	s
+process_game_files	lib/Games/Tournament/TableTennisDe.pm	/^sub process_game_files {$/;"	s
+process_game_files	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^sub process_game_files {$/;"	s
+process_group_files	lib/Games/Tournament/TableTennis.pm	/^sub process_group_files {$/;"	s
+process_group_files	lib/Games/Tournament/TableTennisDe.pm	/^sub process_group_files {$/;"	s
+process_group_files	myrtscht-module/lib/Games/Tournament/TableTennis.pm	/^sub process_group_files {$/;"	s

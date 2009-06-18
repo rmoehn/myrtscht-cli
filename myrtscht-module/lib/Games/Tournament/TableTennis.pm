@@ -27,7 +27,7 @@ our @EXPORT = qw(
         preprocess_game_files
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 # the subroutine for creating a new tournament

@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+use autodie;
+use File::Find;
+use Storable;
+
+# this script was used to make the dump of the structure of a
+# tournament directory for the test suite of the myrtscht distribution
+
+undef $/;
+my %hash_of_the_dir;
+find(\&something_nice_in, $ARGV[0]);
+
+sub something_nice_in {
+    return if -d;
+    open FILE, '<', $_;
+    $hash_of_the_dir{$File::Find::name} = <FILE>;
+}  
+
+store \%hash_of_the_dir, $ARGV[0] . '.dmp';
