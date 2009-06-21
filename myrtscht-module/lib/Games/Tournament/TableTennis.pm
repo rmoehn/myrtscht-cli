@@ -428,28 +428,28 @@ time to time.
 
 =over 4
 
-=item * L<myrtscht>
+=item L<myrtscht>
 
 The frontend program to this module.
 
-=item * L<Games::Tournament::MyrtschtTutEn>
+=item L<Games::Tournament::MyrtschtTutEn>
 
 A tutorial to myrtscht.
 
-=item * L<www.myrtscht.de|http://www.myrtscht.de>
+=item L<www.myrtscht.de|http://www.myrtscht.de>
 
 A website concerning this program. Not really mature yet.
 
-=item * L<git://git.tuxfamily.org/gitroot/myrtscht/progrel.git>
+=item L<git://git.tuxfamily.org/gitroot/myrtscht/programrel.git>
 
 The git repository with the current state of development. Use it by
 typing
 
-    git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
+    git clone git://git.tuxfamily.org/gitroot/myrtscht/programrel.git
 
 But beware: It is NOT stable.
 
-=item * L<Games::Tournament::RoundRobin>
+=item L<Games::Tournament::RoundRobin>
 
 A module which was very useful creating this module.
 

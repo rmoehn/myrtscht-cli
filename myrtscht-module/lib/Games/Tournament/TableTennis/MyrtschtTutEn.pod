@@ -186,12 +186,12 @@ The module on which the program is based.
 
 A website concerning this program. Not really mature yet.
 
-=item L<git://git.tuxfamily.org/gitroot/myrtscht/progrel.git>
+=item L<git://git.tuxfamily.org/gitroot/myrtscht/programrel.git>
 
 The git repository with the current state of development. Use it by
 typing
 
-    git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
+    git clone git://git.tuxfamily.org/gitroot/myrtscht/programrel.git
 
 But beware: It is NOT stable.
 
