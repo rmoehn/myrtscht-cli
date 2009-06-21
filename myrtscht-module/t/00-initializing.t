@@ -3,14 +3,15 @@ use warnings;
 
 use Test::Command tests => 5;
 use Test::More;
+use Cwd;
 
 my $myrtscht =
-    '/home/moses/Perl/Myrtscht/myrtscht-module/script_files/myrtscht';
+    cwd() . '/script_files/myrtscht';
 chdir '/tmp' or die "Couldn't change into /tmp: $!";
 
 # testing the initializing of a tournament
 my $init_tourn = Test::Command->new(
-    cmd => [$myrtscht, qw(-n ttourn -g 2 -d 2)]
+    cmd => "$myrtscht -n ttourn -g 2 -d 2"
 );
 
 $init_tourn->exit_is_num(0);

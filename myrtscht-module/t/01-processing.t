@@ -3,9 +3,10 @@ use warnings;
 
 use Test::Command tests => 7;
 use Test::More;
+use Cwd;
 
 my $myrtscht =
-    '/home/moses/Perl/Myrtscht/myrtscht-module/script_files/myrtscht';
+    cwd() . '/script_files/myrtscht';
 chdir '/tmp' or die "Couldn't change into /tmp: $!";
 
 ok((grep /ttourn/, glob '*'),

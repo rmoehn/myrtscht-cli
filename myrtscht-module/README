@@ -24,13 +24,23 @@ To install this module type the following:
 
 DEPENDENCIES
 
-This module requires these other modules and libraries:
+This distribution requires these other modules and libraries:
 
     Log::Log4perl
 
     Net::CUPS
 
     Games::Tournament::RoundRobin
+
+    File::Path
+
+    Storable
+    
+    Test::Command
+    
+    Test::More
+
+    Data::Compare
 
 COPYRIGHT AND LICENCE
 

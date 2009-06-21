@@ -3,7 +3,7 @@ use strict;
 
 use File::Find;
 use File::Path;
-use Data::Dumper;
+use Data::Compare;
 use Storable;
 use Test::Simple tests => 2;
 

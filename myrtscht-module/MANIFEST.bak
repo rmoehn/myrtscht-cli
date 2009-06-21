@@ -9,5 +9,4 @@ t/00-initializing.t
 t/01-processing.t
 t/02-analysing.t
 t/03-dirstrct-cmp.t
-t/04-doc.t
 t/ttourn.dmp
