@@ -3,6 +3,7 @@
 # all the nice modules
 use strict;
 use warnings;
+#use lib 'lib';
 use Log::Log4perl qw( :easy );
 use Getopt::Long qw( :config no_ignore_case bundling auto_version);
 use Pod::Usage;
@@ -261,7 +262,7 @@ S<"Table: "> the name of the table they play at.  The "ID" is
 formed out of the names of the group directory (first two digits)
 and the game file (last two or three digits).  Hence you can
 easily identify the game file belonging to the particular game
-sheet.  (This is also demonstrated in L<.)  Then the names of
+sheet.  (This is also demonstrated in L<Games::Tournament::TableTennis::MyrtschtTutEn.)  Then the names of
 the opponents come and in the space below the referee can write
 down the result of the match.  The height of this space varies
 with the number of rounds to play to win a match.

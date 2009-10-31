@@ -263,7 +263,7 @@ S<"Table: "> the name of the table they play at.  The "ID" is
 formed out of the names of the group directory (first two digits)
 and the game file (last two or three digits).  Hence you can
 easily identify the game file belonging to the particular game
-sheet.  (This is also demonstrated in L<.)  Then the names of
+sheet.  (This is also demonstrated in L<>.)  Then the names of
 the opponents come and in the space below the referee can write
 down the result of the match.  The height of this space varies
 with the number of rounds to play to win a match.
@@ -361,6 +361,8 @@ typing
     git clone git://git.tuxfamily.org/gitroot/myrtscht/progrel.git
 
 But beware: It is NOT stable.
+
+=back
 
 
 =head1 AUTHOR
