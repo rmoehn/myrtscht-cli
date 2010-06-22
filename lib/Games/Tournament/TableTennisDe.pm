@@ -81,14 +81,14 @@ sub process_group_files {
 
     # We have to compute some things therewith the printout looks
     # nice later.
-    # The number of lines per sheet of A4 paper must be 67 and 67
+    # The number of lines per sheet of A4 paper must be 69 and 69
     # must be the number of lines per sheet of A4 paper as thou have
     # to use A4 paper with a number of 13 chars per column to get 
     # nice results.
     my $maxsetnr        = ($options->{r} || 2) * 2 - 1;
     my $gamesheetheigth = $maxsetnr + 6;
-    my $gamesheets      = sprintf("%d", 67 / $gamesheetheigth);
-    my $newlines        = 67 - $gamesheets * $gamesheetheigth;
+    my $gamesheets      = sprintf("%d", 69 / $gamesheetheigth);
+    my $newlines        = 69 - $gamesheets * $gamesheetheigth;
     DEBUG "Die Spielzettel sind $gamesheetheigth Zeilen hoch. Also "
         . "können wir $gamesheets von ihnen in eine Spalte schreiben "
         . "und müssen $newlines Leerzeilen danach einfügen."; 
@@ -123,6 +123,7 @@ sub process_group_files {
             or warn "Konnte das Ziel des Druckers nicht "
                   . "herausfinden. Bitte nimm einen anderen.\n";
         $printer->addOption("cpi", 13);
+        $printer->addOption("lpi", 6.5);
         $printer->addOption("columns", 2);
     } 
 

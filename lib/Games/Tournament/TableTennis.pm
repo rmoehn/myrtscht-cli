@@ -1,6 +1,6 @@
 package Games::Tournament::TableTennis;
 
-use 5.008000;
+use 5.010;
 use strict;
 use warnings;
 use Log::Log4perl qw( :easy );
@@ -125,6 +125,7 @@ sub process_group_files {
             or warn "Couldn't get your printer's destination: "
                   . "You have to specify another.\n";
         $printer->addOption("cpi", 13);
+        $printer->addOption("lpi", 6.5);
         $printer->addOption("columns", 2);
     } 
 

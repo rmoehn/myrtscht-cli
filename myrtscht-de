@@ -6,7 +6,7 @@ use warnings;
 use Log::Log4perl qw( :easy );
 use Getopt::Long qw( :config no_ignore_case bundling );
 use Pod::Usage;
-use lib '/home/moses/Perl/Myrtscht/lib';
+use lib '/home/erle/Perl/Myrtscht/lib';
 use Games::Tournament::TableTennisDe qw( :all );
 
 our $VERSION = '0.02';
