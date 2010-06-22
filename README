@@ -1,0 +1,7 @@
+This is the suspended version of the program myrtscht. I decided to
+rewrite it and make it a GUI program. (See also the website.) I am
+keeping the repository just for those who are interested and for maybe
+continuing the development of an alternative CLI.
+
+NOTE: This repository is somehow messy as I was not very familiar to
+git when I created it.
